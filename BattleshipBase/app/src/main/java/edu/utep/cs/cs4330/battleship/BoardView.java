@@ -80,7 +80,7 @@ public class BoardView extends View implements Runnable{
          * @param x 0-based column index of the touched place
          * @param y 0-based row index of the touched place
          */
-        void onTouch(int x, int y);
+        void onTouch(int x, int y, Board board);
     }
 
     /** Create a new board view to be run in the given context. */
@@ -290,9 +290,9 @@ public class BoardView extends View implements Runnable{
     }
 
     /** Notify all registered listeners. */
-    private void notifyBoardTouch(int x, int y) {
+    protected void notifyBoardTouch(int x, int y,Board board) {
         for (BoardTouchListener listener: listeners) {
-            listener.onTouch(x, y);
+            listener.onTouch(x, y, board);
         }
     }
 
