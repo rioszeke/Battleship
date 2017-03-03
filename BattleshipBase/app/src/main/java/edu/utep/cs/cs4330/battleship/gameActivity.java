@@ -32,19 +32,26 @@ public class gameActivity extends AppCompatActivity {
     protected MediaPlayer gameOver;
     protected Vibrator v;
 
+    private Player player;
+    private Player opponent;
+    private Boolean playerTurn;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_game);
+        setContentView(R.layout.activity_main);
 
-        numShots = (TextView)findViewById(R.id.numShots);
+        playerTurn = true;
 
         initializeBoard(playerBoard);
         initializeBoard(opponentBoard);
 
+        numShots = (TextView)findViewById(R.id.numShots);
         opponentBoardView = (BoardView) findViewById(R.id.opponentBoardView);
         playerBoardView = (BoardView) findViewById(R.id.playerBoardView);
 
+        //initializeBoardView(playerBoard, opponentBoardView);
+        //initializeBoardView(opponentBoard, playerBoardView);
         opponentBoardView.setBoard(playerBoard);
         playerBoardView.setBoard(opponentBoard);
 
@@ -53,6 +60,9 @@ public class gameActivity extends AppCompatActivity {
         shipSunk = MediaPlayer.create(findViewById(R.id.activity_main).getContext(), R.raw.aaaahh);
         gameOver = MediaPlayer.create(findViewById(R.id.activity_main).getContext(), R.raw.about_time);
         v = (Vibrator) findViewById(R.id.activity_main).getContext().getSystemService(Context.VIBRATOR_SERVICE);
+
+        player = new humanPlayer(opponentBoard, playerTurn, playerBoardView);
+        opponent = new ComputerPlayer(playerBoard, !playerTurn, opponentBoardView);
 
         playerViewThread = new Thread(playerBoardView);
         opponentViewThread = new Thread(opponentBoardView);
@@ -66,6 +76,18 @@ public class gameActivity extends AppCompatActivity {
                         runOnUiThread(new Runnable(){
                             public void run(){
                                 numShots.setText("Number of Shots: "+ opponentBoard.numOfShots());
+                                if(playerTurn){
+                                    if(!playerBoardView.hasBoardTouchListener()){
+                                        playerBoardView.addBoardTouchListener(new gameActivity.BoardTouchListener());
+                                    }
+                                    player.nextMove();
+                                }
+                                else{
+                                    if(!opponentBoardView.hasBoardTouchListener()){
+                                        opponentBoardView.addBoardTouchListener(new gameActivity.BoardTouchListener());
+                                    }
+                                    opponent.nextMove();
+                                }
                             }
                         });
                     }
@@ -86,16 +108,26 @@ public class gameActivity extends AppCompatActivity {
         board.addBoardChangeListener(new gameActivity.BoardChangeListener());
     }
 
+    private void initializeBoardView(Board board, BoardView view){
+        view.setBoard(board);
+        view.addBoardTouchListener(new gameActivity.BoardTouchListener());
+    }
+
 
     /**
      * BoardTouchListener to remove and add when button is clicked
      */
     private class BoardTouchListener implements BoardView.BoardTouchListener {
         @Override
-        public void onTouch(int x, int y, Player player) {
-            if(!player.getBoard().at(x+1, y+1).isHit()) {
-                board.hit(board.at(x + 1, y + 1));
-                //boardView.invalidate();
+        public void onTouch(int x, int y) {
+            if (playerTurn) {
+                if (!player.getBoard().at(x + 1, y + 1).isHit()) {
+                    player.hit(x + 1, y + 1);
+                } else {
+                    if (!opponent.getBoard().at(x + 1, y + 1).isHit()) {
+                        opponent.hit(x + 1, y + 1);
+                    }
+                }
             }
         }
     }
@@ -119,7 +151,7 @@ public class gameActivity extends AppCompatActivity {
                 }
             }
             else{
-
+                playerTurn = !playerTurn;
                 placeHit.start();
             }
             opponentBoardView.invalidate();

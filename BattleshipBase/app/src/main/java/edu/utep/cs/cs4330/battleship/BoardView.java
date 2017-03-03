@@ -80,7 +80,7 @@ public class BoardView extends View implements Runnable{
          * @param x 0-based column index of the touched place
          * @param y 0-based row index of the touched place
          */
-        void onTouch(int x, int y, Board board);
+        void onTouch(int x, int y);
     }
 
     /** Create a new board view to be run in the given context. */
@@ -280,6 +280,10 @@ public class BoardView extends View implements Runnable{
         }
     }
 
+    public boolean hasBoardTouchListener(){
+        return !listeners.isEmpty();
+    }
+
     /** Unregister the given listener. */
     public void removeBoardTouchListener(BoardTouchListener listener) {
         listeners.remove(listener);
@@ -290,9 +294,10 @@ public class BoardView extends View implements Runnable{
     }
 
     /** Notify all registered listeners. */
-    protected void notifyBoardTouch(int x, int y,Board board) {
+    protected void notifyBoardTouch(int x, int y) {
+        removeAllBoardTouchListeners();
         for (BoardTouchListener listener: listeners) {
-            listener.onTouch(x, y, board);
+            listener.onTouch(x, y);
         }
     }
 
