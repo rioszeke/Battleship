@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Battleship</string>
+    <string name="new_button_label">New</string>
+
+    <string name="new_prompt">Would you like to start a new game?</string>
+    <string name="confirm">Yes</string>
+    <string name="deny">No</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_menu">MenuActivity</string>
+</resources>
