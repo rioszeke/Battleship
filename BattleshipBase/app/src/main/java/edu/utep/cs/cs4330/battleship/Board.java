@@ -19,7 +19,7 @@ public class Board /*implements Runnable*/{
      * <code>size*size </code> places.
      */
     private final int size;
-
+/** this is a comment*/
     /**
      * Number of shots taken at this Board
      */
