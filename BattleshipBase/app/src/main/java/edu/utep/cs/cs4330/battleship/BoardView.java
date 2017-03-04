@@ -32,16 +32,8 @@ public class BoardView extends View implements Runnable{
     /** Board background color. */
     private final int boardColor = Color.rgb(102, 163, 255);
 
-    /**
-     * Sounds to play during various states of the game
-     */
-//    protected MediaPlayer placeHit = MediaPlayer.create(this.getContext(), R.raw.woohoo);
-//
-//    protected MediaPlayer shipHit = MediaPlayer.create(this.getContext(), R.raw.doh2);
-//
-//    protected MediaPlayer shipSunk = MediaPlayer.create(this.getContext(), R.raw.aaaahh);
-//
-//    protected MediaPlayer gameOver = MediaPlayer.create(this.getContext(), R.raw.about_time);
+    /** Boolean to draw board different colors */
+    private Boolean playerBoard;
 
     /** Vibrates phone, requires app permission */
     protected Vibrator v = (Vibrator) this.getContext().getSystemService(Context.VIBRATOR_SERVICE);
@@ -99,9 +91,10 @@ public class BoardView extends View implements Runnable{
     }
 
     /** Set the board to to be displayed by this view. */
-    public void setBoard(Board board) {
+    public void setBoard(Board board, Boolean playerBoard) {
         this.board = board;
         this.boardSize = board.size();
+        this.playerBoard = playerBoard;
         //board.addBoardChangeListener(new MainActivity.BoardChangeListener());
         //board.placeShips();
     }
@@ -190,20 +183,43 @@ public class BoardView extends View implements Runnable{
     private void drawPlaces(Canvas canvas) {
         Paint paint = new Paint();
         paint.setStyle(Paint.Style.FILL);
-        for(Place place: board.places()){
-            RectF rect = createRectF(place.getX()-1, place.getY()-1);
-            if(place.isHitShip()){
-                paint.setColor(Color.RED);
-                canvas.drawRoundRect(rect, 10, 10, paint);
-            }
-            else{
-                if(place.isHit()){
-                    paint.setColor(Color.BLUE);
+        if(!playerBoard) {
+            for (Place place : board.places()) {
+                RectF rect = createRectF(place.getX() - 1, place.getY() - 1);
+                if (place.isHitShip()) {
+                    paint.setColor(Color.RED);
                     canvas.drawRoundRect(rect, 10, 10, paint);
+                } else {
+                    if (place.isHit()) {
+                        paint.setColor(Color.BLUE);
+                        canvas.drawRoundRect(rect, 10, 10, paint);
+                    } else {
+                        paint.setColor(Color.GREEN);
+                        canvas.drawRoundRect(rect, 10, 10, paint);
+                    }
                 }
-                else{
-                    paint.setColor(Color.GREEN);
+            }
+        }
+        else{
+            for (Place place : board.places()) {
+                RectF rect = createRectF(place.getX() - 1, place.getY() - 1);
+                if (place.isHitShip()) {
+                    paint.setColor(Color.RED);
                     canvas.drawRoundRect(rect, 10, 10, paint);
+                } else {
+                    if (place.isHit()) {
+                        paint.setColor(Color.BLUE);
+                        canvas.drawRoundRect(rect, 10, 10, paint);
+                    } else {
+                        if(place.hasShip()){
+                            paint.setColor(Color.BLACK);
+                            canvas.drawRoundRect(rect,10,10,paint);
+                        }
+                        else {
+                            paint.setColor(Color.GREEN);
+                            canvas.drawRoundRect(rect, 10, 10, paint);
+                        }
+                    }
                 }
             }
         }

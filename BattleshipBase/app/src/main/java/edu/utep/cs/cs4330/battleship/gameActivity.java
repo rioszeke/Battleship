@@ -56,8 +56,8 @@ public class gameActivity extends AppCompatActivity {
 
         //initializeBoardView(playerBoard, opponentBoardView);
         //initializeBoardView(opponentBoard, playerBoardView);
-        opponentBoardView.setBoard(playerBoard);
-        playerBoardView.setBoard(opponentBoard);
+        opponentBoardView.setBoard(playerBoard, true);
+        playerBoardView.setBoard(opponentBoard, false);
 
         opponentContent = MediaPlayer.create(findViewById(R.id.activity_main).getContext(), R.raw.woohoo);
         opponentSad = MediaPlayer.create(findViewById(R.id.activity_main).getContext(), R.raw.doh2);
@@ -66,6 +66,9 @@ public class gameActivity extends AppCompatActivity {
         v = (Vibrator) findViewById(R.id.activity_main).getContext().getSystemService(Context.VIBRATOR_SERVICE);
 
         player = new humanPlayer(opponentBoard, playerTurn, playerBoardView);
+        
+        /* watch 2 computers duke it out for funsies */
+        //player = new ComputerPlayer(opponentBoard, playerTurn, playerBoardView);
         opponent = new ComputerPlayer(playerBoard, !playerTurn, opponentBoardView);
 
         playerViewThread = new Thread(playerBoardView);
