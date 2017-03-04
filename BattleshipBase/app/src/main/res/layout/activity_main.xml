@@ -13,14 +13,31 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="horizontal"
+        android:id="@+id/linearLayout2"
+        android:layout_weight="1">
 
+        <edu.utep.cs.cs4330.battleship.BoardView
+            android:id="@+id/opponentBoardView"
+            android:layout_width="0dp"
+            android:layout_weight="2"
+            android:layout_height="130dp"
+            android:layout_marginTop="10dp"/>
         <Button
             android:text="@string/new_button_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick = "newClicked"
             android:id="@+id/newButton" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_below="@+id/linearLayout2"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
 
         <TextView
             android:layout_width="wrap_content"
@@ -33,7 +50,7 @@
         <edu.utep.cs.cs4330.battleship.BoardView
             android:id="@+id/playerBoardView"
             android:layout_width="match_parent"
-            android:layout_weight="1"
+            android:layout_weight="2"
             android:layout_height="0dp"
             android:layout_marginTop="10dp"/>
     </LinearLayout>

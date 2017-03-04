@@ -295,10 +295,11 @@ public class BoardView extends View implements Runnable{
 
     /** Notify all registered listeners. */
     protected void notifyBoardTouch(int x, int y) {
-        removeAllBoardTouchListeners();
         for (BoardTouchListener listener: listeners) {
             listener.onTouch(x, y);
         }
+        removeAllBoardTouchListeners();
+        System.out.println("Board touch Listener removed!!*********************");
     }
 
 //    /**

@@ -137,6 +137,30 @@ public class Board /*implements Runnable*/{
     }
 
     /**
+     * Debugging method to print board and status of places
+     */
+    public void printBoard(){
+        int i = 0;
+        for(Place place: places()){
+            String hit = "";
+            if(place.isHitShip()){
+                hit = "SHIP";
+            }
+            else{
+                if(place.isHit()) {
+                    hit = "!hit";
+                }
+            }
+            System.out.print("["+place.getX()+","+place.getY()+":"+hit+"]");
+            i++;
+            if(i == size()){
+                i = 0;
+                System.out.println("");
+            }
+        }
+    }
+
+    /**
      * Places the list of ships in a random orientation and order
      */
     public void placeShips(){
@@ -218,6 +242,7 @@ public class Board /*implements Runnable*/{
                 return p;
             }
         }
+        System.out.println("failed to find place at: ("+x+", "+y+")");
         return null;
     }
 

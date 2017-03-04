@@ -15,6 +15,7 @@ class ComputerPlayer extends Player {
         opponentBoard = board;
         this.turn = turn;
         playerBoardView = view;
+        strategy = new RandomStrategy(board);
     }
 
     public void setStrategy(Strategy strategy){
@@ -24,6 +25,6 @@ class ComputerPlayer extends Player {
     @Override
     public void nextMove(){
         Place nextHit = strategy.getNextMove();
-        playerBoardView.notifyBoardTouch(nextHit.getX(), nextHit.getY());
+        playerBoardView.notifyBoardTouch(nextHit.getX()-1, nextHit.getY()-1);
     }
 }

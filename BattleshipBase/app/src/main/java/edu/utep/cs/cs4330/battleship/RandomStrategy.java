@@ -11,6 +11,7 @@ class RandomStrategy extends Strategy {
 
     public RandomStrategy(Board board){
         super(board);
+        this.board = board;
     }
 
     private int randomNumber(int min, int max){
@@ -22,12 +23,13 @@ class RandomStrategy extends Strategy {
     @Override
     public Place getNextMove(){
         Place place;
-        int x, y;
-        do{
-            x = randomNumber(0, board.size());
-            y = randomNumber(0, board.size());
-            place = board.at(x,y);
-        } while(!place.isHit());
+        int x , y;
+            do {
+                x = randomNumber(1, board.size());
+                y = randomNumber(1, board.size());
+                place = board.at(x, y);
+                System.out.println("attempting to select shot at: (" + place.getX() + ", " + place.getY() + ")");
+            } while (place.isHit());
         return place;
     }
 }
