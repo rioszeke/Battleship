@@ -66,7 +66,7 @@ public class gameActivity extends AppCompatActivity {
         v = (Vibrator) findViewById(R.id.activity_main).getContext().getSystemService(Context.VIBRATOR_SERVICE);
 
         player = new humanPlayer(opponentBoard, playerTurn, playerBoardView);
-        
+
         /* watch 2 computers duke it out for funsies */
         //player = new ComputerPlayer(opponentBoard, playerTurn, playerBoardView);
         opponent = new ComputerPlayer(playerBoard, !playerTurn, opponentBoardView);
