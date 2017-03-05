@@ -1,6 +1,7 @@
 package edu.utep.cs.cs4330.battleship;
 
 import android.app.DialogFragment;
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.graphics.RadialGradient;
@@ -10,7 +11,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class gameActivity extends AppCompatActivity {
 
@@ -35,45 +35,55 @@ public class gameActivity extends AppCompatActivity {
     private Player opponent;
     private Boolean playerTurn;
 
+    private Strategy strategy;
+
+    private difficultyFragment difficultyFrag;
+    private playFragment playFrag;
+
+    private class DifficultySelectListener implements difficultyFragment.DifficultySelectListener{
+
+        @Override
+        public void difficultySelected(String difficulty){
+            System.out.println("The difficulty was: "+difficulty);
+
+            playerTurn = true;
+            playerBoard = new Board(10);
+            playerBoard.placeShips();
+            opponentBoard = new Board(10);
+            opponentBoard.placeShips();
+            playerBoard.addBoardChangeListener(new BoardChangeListener());
+            opponentBoard.addBoardChangeListener(new BoardChangeListener());
+
+
+            /* modify when another strategy has been created */
+            if(difficulty.equals("Hard")){
+                strategy = new RandomStrategy(playerBoard);
+            }
+            else{
+                strategy = new RandomStrategy(playerBoard);
+            }
+
+            startGame();
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        System.out.println("onCreate called!!***************************************************");
         setContentView(R.layout.activity_main);
+        difficultyFrag = new difficultyFragment();
+        difficultyFrag.addDifficultyListener(new DifficultySelectListener());
 
-        playerTurn = true;
-        playerBoard = new Board(10);
-        playerBoard.placeShips();
-        playerBoard.printBoard();
-        opponentBoard = new Board(10);
-        opponentBoard.placeShips();
-        opponentBoard.printBoard();
-        playerBoard.addBoardChangeListener(new BoardChangeListener());
-        opponentBoard.addBoardChangeListener(new BoardChangeListener());
+        getFragmentManager().beginTransaction()
+                .replace(R.id.fragment_frame, difficultyFrag, difficultyFrag.getClass().getSimpleName()).commit();
 
-        numShots = (TextView)findViewById(R.id.numShots);
-        opponentBoardView = (BoardView) findViewById(R.id.opponentBoardView);
-        playerBoardView = (BoardView) findViewById(R.id.playerBoardView);
-
-        //initializeBoardView(playerBoard, opponentBoardView);
-        //initializeBoardView(opponentBoard, playerBoardView);
-        opponentBoardView.setBoard(playerBoard, true);
-        playerBoardView.setBoard(opponentBoard, false);
-
-        opponentContent = MediaPlayer.create(findViewById(R.id.activity_main).getContext(), R.raw.woohoo);
-        opponentSad = MediaPlayer.create(findViewById(R.id.activity_main).getContext(), R.raw.doh2);
-        opponentAngry = MediaPlayer.create(findViewById(R.id.activity_main).getContext(), R.raw.aaaahh);
-        gameOver = MediaPlayer.create(findViewById(R.id.activity_main).getContext(), R.raw.about_time);
-        v = (Vibrator) findViewById(R.id.activity_main).getContext().getSystemService(Context.VIBRATOR_SERVICE);
-
-        player = new humanPlayer(opponentBoard, playerTurn, playerBoardView);
-
-        /* watch 2 computers duke it out for funsies */
-        //player = new ComputerPlayer(opponentBoard, playerTurn, playerBoardView);
-        opponent = new ComputerPlayer(playerBoard, !playerTurn, opponentBoardView);
-
-        playerViewThread = new Thread(playerBoardView);
-        opponentViewThread = new Thread(opponentBoardView);
-
+        opponentContent = MediaPlayer.create(findViewById(R.id.fragment_frame).getContext(), R.raw.woohoo);
+        opponentSad = MediaPlayer.create(findViewById(R.id.fragment_frame).getContext(), R.raw.doh2);
+        opponentAngry = MediaPlayer.create(findViewById(R.id.fragment_frame).getContext(), R.raw.aaaahh);
+        gameOver = MediaPlayer.create(findViewById(R.id.fragment_frame).getContext(), R.raw.about_time);
+        v = (Vibrator) findViewById(R.id.fragment_frame).getContext().getSystemService(Context.VIBRATOR_SERVICE);
+        
         thread = new Thread(){
             @Override
             public void run(){
@@ -105,12 +115,29 @@ public class gameActivity extends AppCompatActivity {
                 }
             }
         };
-//
+////
+//        thread.start();
+//        playerViewThread.start();
+//        opponentViewThread.start();
+
+    }
+    private void startGame() {
+        System.out.println("start game called!*****************");
+
+        startThreads();
+
+        playFrag = new playFragment();
+        moveToFragment(playFrag);
+    }
+
+    private void startThreads(){
+        playerViewThread = new Thread(playerBoardView);
+        opponentViewThread = new Thread(opponentBoardView);
         thread.start();
         playerViewThread.start();
         opponentViewThread.start();
-
     }
+
     /**
      * Linked to "new" button, upon being clicked board will
      * be reset and new ships will be randomly placed
@@ -159,6 +186,50 @@ public class gameActivity extends AppCompatActivity {
         board.placeShips();
         boardView.removeAllBoardTouchListeners();
         boardView.invalidate();
+    }
+
+    private void moveToFragment(Fragment fragment){
+        System.out.println("Move to Fragment called!! moving to: "+fragment.getClass().getSimpleName()+"************************");
+        getFragmentManager().beginTransaction()
+                .replace(R.id.fragment_frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
+    }
+
+
+    public BoardView getPlayerBoardView(){
+        System.out.println("getPlayerBoardView called!!********************");
+        playerBoardView = (BoardView) findViewById(R.id.playerBoardView);
+        playerBoardView.setBoard(opponentBoard, true);
+        player = new humanPlayer(opponentBoard, playerTurn, playerBoardView);
+        return playerBoardView;
+    }
+
+    public Board getPlayerBoard(){
+        return playerBoard;
+    }
+
+    public BoardView getOpponentBoardView(){
+        System.out.println("getOpponentBoardView called!!!**********************");
+        opponentBoardView = (BoardView) findViewById(R.id.opponentBoardView);
+        opponentBoardView.setBoard(playerBoard, false);
+        if(strategy != null) {
+            opponent = new ComputerPlayer(playerBoard, !playerTurn, opponentBoardView, strategy);
+        }
+        else{
+            opponent = new humanPlayer(playerBoard, !playerTurn, opponentBoardView);
+        }
+
+        return opponentBoardView;
+    }
+
+    public Board getOpponentBoard(){
+        return opponentBoard;
+    }
+
+    public TextView getShotsView(){
+        System.out.println("getShotsView called!!*******************************");
+        numShots = (TextView) findViewById(R.id.numShots);
+
+        return numShots;
     }
 
 

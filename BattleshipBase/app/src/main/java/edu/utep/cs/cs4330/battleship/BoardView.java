@@ -132,19 +132,22 @@ public class BoardView extends View implements Runnable{
      */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_UP:
-                int xy = locatePlace(event.getX(), event.getY());
-                if (xy >= 0 && xy/100 < boardSize && xy%100 < boardSize) {
-                    notifyBoardTouch(xy / 100, xy % 100);
-                }
-                break;
-            case MotionEvent.ACTION_DOWN:
-            case MotionEvent.ACTION_MOVE:
-            case MotionEvent.ACTION_CANCEL:
-                break;
+        if(!playerBoard) {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_UP:
+                    int xy = locatePlace(event.getX(), event.getY());
+                    if (xy >= 0 && xy / 100 < boardSize && xy % 100 < boardSize) {
+                        notifyBoardTouch(xy / 100, xy % 100);
+                    }
+                    break;
+                case MotionEvent.ACTION_DOWN:
+                case MotionEvent.ACTION_MOVE:
+                case MotionEvent.ACTION_CANCEL:
+                    break;
+            }
+            return true;
         }
-        return true;
+        return false;
     }
 
     /**
