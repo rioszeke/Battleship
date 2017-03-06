@@ -51,28 +51,8 @@ public class difficultyFragment extends Fragment implements View.OnClickListener
     @Override
     public void onResume(){
         super.onResume();
-//        try {
         shipsView = ((gameActivity) this.getActivity()).getSelectShipsView();
         placedShipsView = ((gameActivity) this.getActivity()).getPlacedShipsView();
-
-//            playerBoard = ((gameActivity) this.getActivity()).getPlayerBoard();
-//            opponentBoard = ((gameActivity) this.getActivity()).getOpponentBoard();
-
-//        }catch(Exception e){
-//            if(playerBoardView == null){
-//                System.out.println("playerBoardView was null");
-//            }
-//            if(opponentBoardView == null){
-//                System.out.println("opponentBoardView was null");
-//            }
-//            if(playerBoard == null){
-//                System.out.println("playerBoard was null");
-//            }
-//            if(opponentBoard == null){
-//                System.out.println("opponentBoard was null");
-//            }
-//        }
-
     }
 
     public void onClick(View v){

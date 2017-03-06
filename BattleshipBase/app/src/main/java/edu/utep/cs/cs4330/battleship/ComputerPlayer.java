@@ -32,10 +32,7 @@ class ComputerPlayer extends Player {
     @Override
     public void nextMove(){
         Place nextHit = strategy.getNextMove();
-        if(playerBoardView == null){
-            System.out.println("According to player computer playerBoardView is null********************************************************");
-        }
-        System.out.println("Computer generated next hit and is hitting at: "+(nextHit.getX()-1)+", "+(nextHit.getY()-1));
+        System.out.println("Computer generated shot ("+(nextHit.getX()-1)+", "+(nextHit.getY()-1));
         playerBoardView.notifyBoardTouch(nextHit.getX()-1, nextHit.getY()-1);
     }
 }

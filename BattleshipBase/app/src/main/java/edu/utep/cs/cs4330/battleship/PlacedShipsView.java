@@ -16,7 +16,7 @@ import java.util.List;
  * Created by riosz on 3/5/2017.
  */
 
-class PlacedShipsView extends View{
+public class PlacedShipsView extends View{
 
     /** Callback interface to listen for board touches. */
     public interface PlacedListener {

@@ -34,40 +34,15 @@ public class playFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle bundle){
         super.onActivityCreated(bundle);
-//        playerBoardView = ((gameActivity)this.getActivity()).getPlayerBoardView();
-//        opponentBoardView = ((gameActivity)this.getActivity()).getOpponentBoardView();
-//
-//        playerBoardView.setBoard(((gameActivity)this.getActivity()).getPlayerBoard(), true);
-//        opponentBoardView.setBoard(((gameActivity)this.getActivity()).getOpponentBoard(), false);
-//
-//        numShots = ((gameActivity)this.getActivity()).getShotsView();
     }
 
     @Override
     public void onResume(){
         super.onResume();
-//        try {
             playerBoardView = ((gameActivity) this.getActivity()).getPlayerBoardView();
             opponentBoardView = ((gameActivity) this.getActivity()).getOpponentBoardView();
 
-//            playerBoard = ((gameActivity) this.getActivity()).getPlayerBoard();
-//            opponentBoard = ((gameActivity) this.getActivity()).getOpponentBoard();
-
             numShots = ((gameActivity) this.getActivity()).getShotsView();
-//        }catch(Exception e){
-//            if(playerBoardView == null){
-//                System.out.println("playerBoardView was null");
-//            }
-//            if(opponentBoardView == null){
-//                System.out.println("opponentBoardView was null");
-//            }
-//            if(playerBoard == null){
-//                System.out.println("playerBoard was null");
-//            }
-//            if(opponentBoard == null){
-//                System.out.println("opponentBoard was null");
-//            }
-//        }
 
     }
 

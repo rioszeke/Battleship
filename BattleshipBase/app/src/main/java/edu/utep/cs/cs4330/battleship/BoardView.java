@@ -301,7 +301,6 @@ public class BoardView extends View implements Runnable{
         for(BoardTouchListener listener1 : listeners){
             i++;
         }
-        System.out.println("Board touch listener added #Board touch listeners: "+ i);
     }
 
     public boolean hasBoardTouchListener(){
@@ -323,6 +322,5 @@ public class BoardView extends View implements Runnable{
             listener.onTouch(x, y);
         }
         removeAllBoardTouchListeners();
-        System.out.println("Board touch Listener removed!!*********************");
     }
 }

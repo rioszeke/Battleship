@@ -259,7 +259,6 @@ public class Board /*implements Runnable*/{
                 return p;
             }
         }
-        System.out.println("failed to find place at: ("+x+", "+y+")");
         return null;
     }
 
@@ -295,9 +294,7 @@ public class Board /*implements Runnable*/{
      */
     public void hit(Place place){
         if(place == null){
-//            System.out.println("Place is null method: hit(Place place) Class: Board");
         }
-        //System.out.println("Hitting place [x: "+place.getX()+"] [y: "+place.getY()+"]");
         if(!place.isHit()){
             place.hit();
             return;
@@ -326,7 +323,6 @@ public class Board /*implements Runnable*/{
         for(BoardChangeListener listener1 : listeners){
             i++;
         }
-        System.out.println("board change listener added! #boardChange listeners: "+ i);
     }
 
     public boolean hasBoardChangeListener(){
@@ -343,7 +339,6 @@ public class Board /*implements Runnable*/{
      * Notifies BoardChangeListener that a place has been hit
      */
     private void notifyHit(Place place, int numOfShots){
-        //System.out.println("I have notified the board of hit at: "+place.getX()+", "+place.getY());
         for(BoardChangeListener listener : listeners){
             listener.hit(place, numOfShots);
         }

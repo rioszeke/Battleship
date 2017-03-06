@@ -16,7 +16,7 @@ import java.util.List;
  * Created by riosz on 3/5/2017.
  */
 
-class SelectShipsView extends View {
+public class SelectShipsView extends View {
     /** Listeners to be notified upon board touches. */
     private final List<ShipSelectListener> listeners = new ArrayList<>();
 
@@ -185,7 +185,7 @@ class SelectShipsView extends View {
     }
 
     /** Calculate the gap between two horizontal/vertical lines. */
-    protected float lineGap() {
+    private float lineGap() {
         return Math.min(getMeasuredWidth(), getMeasuredHeight()) / (float) boardSize;
     }
 

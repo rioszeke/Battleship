@@ -1,10 +1,8 @@
 package edu.utep.cs.cs4330.battleship;
 
-import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
-import android.graphics.RadialGradient;
 import android.media.MediaPlayer;
 import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
@@ -66,7 +64,6 @@ public class gameActivity extends AppCompatActivity {
 
     }
     private void startGame() {
-        System.out.println("start game called!*****************");
         opponentBoard = new Board(10);
         opponentBoard.placeShips();
         if(!playerBoard.hasBoardChangeListener()) {
@@ -82,7 +79,6 @@ public class gameActivity extends AppCompatActivity {
     }
 
     private void startThreads(){
-        System.out.println("Threads started!!!");
         playerViewThread = new Thread(playerBoardView);
         opponentViewThread = new Thread(opponentBoardView);
         thread = new Thread(){
@@ -96,17 +92,18 @@ public class gameActivity extends AppCompatActivity {
                                 numShots.setText("Number of Shots: "+ opponentBoard.numOfShots());
                                 if(!playerBoard.isGameOver()&&!opponentBoard.isGameOver() && gameStarted) {
                                     if (playerTurn) {
+                                        System.out.println("players turn");
                                         if (!playerBoardView.hasBoardTouchListener()) {
-                                            System.out.println("Added board touch listener******************************************");
                                             playerBoardView.addBoardTouchListener(new gameActivity.BoardTouchListener());
                                         }
-                                        System.out.println("Player.nextMove called!!********************");
                                         player.nextMove();
                                     }
                                     if(!playerTurn){
+                                        System.out.println("opponents turn");
                                         if (!opponentBoardView.hasBoardTouchListener()) {
                                             opponentBoardView.addBoardTouchListener(new gameActivity.BoardTouchListener());
                                         }
+                                        System.out.println("opponent making next move");
                                         opponent.nextMove();
                                     }
                                 }
@@ -186,7 +183,6 @@ public class gameActivity extends AppCompatActivity {
     }
 
     private void moveToFragment(Fragment fragment){
-        System.out.println("Move to Fragment called!! moving to: "+fragment.getClass().getSimpleName()+"************************");
         getFragmentManager().beginTransaction()
                 .replace(R.id.fragment_frame, fragment, fragment.getClass().getSimpleName())/*.addToBackStack(null)*/.commit();
     }
@@ -206,19 +202,13 @@ public class gameActivity extends AppCompatActivity {
     }
 
     public BoardView getPlayerBoardView(){
-        System.out.println("getPlayerBoardView called!!********************");
         playerBoardView = (BoardView) findViewById(R.id.playerBoardView);
         playerBoardView.setBoard(opponentBoard, false);
         player = new humanPlayer(opponentBoard, playerTurn, playerBoardView);
         return playerBoardView;
     }
 
-    public Board getPlayerBoard(){
-        return playerBoard;
-    }
-
     public BoardView getOpponentBoardView(){
-        System.out.println("getOpponentBoardView called!!!**********************");
         opponentBoardView = (BoardView) findViewById(R.id.opponentBoardView);
         opponentBoardView.setBoard(playerBoard, true);
         if(strategy != null) {
@@ -231,12 +221,7 @@ public class gameActivity extends AppCompatActivity {
         return opponentBoardView;
     }
 
-    public Board getOpponentBoard(){
-        return opponentBoard;
-    }
-
     public TextView getShotsView(){
-        System.out.println("getShotsView called!!*******************************");
         numShots = (TextView) findViewById(R.id.numShots);
 
         return numShots;
@@ -269,23 +254,17 @@ public class gameActivity extends AppCompatActivity {
     private class BoardTouchListener implements BoardView.BoardTouchListener {
         @Override
         public void onTouch(int x, int y) {
-            System.out.println("On touch called!! player's turn:"+playerTurn);
             if (playerTurn) {
                 if (!player.getBoard().at(x + 1, y + 1).isHit()) {
-                    System.out.println("player took a shot!*********************");
                     if(!player.hit(x + 1, y + 1)){
                         playerTurn = !playerTurn;
-                        System.out.println("Player turn switched from: "+ !playerTurn+" to: "+playerTurn);
                     }
                     player.hit(x+1, y+1);
                 }
-            }
-            if(!playerTurn){
+            }else{
                 if (!opponent.getBoard().at(x + 1, y + 1).isHit()) {
-                    System.out.println("Computer took a shot!*****************");
                     if(!opponent.hit(x + 1, y + 1)){
                         playerTurn = !playerTurn;
-                        System.out.println("Player turn switched from: "+ !playerTurn+" to: "+playerTurn);
                     }
                     opponent.hit(x+1, y+1);
                 }
@@ -305,7 +284,6 @@ public class gameActivity extends AppCompatActivity {
          * @param numOfShots
          */
         public void hit(Place place, int numOfShots){
-            System.out.println("hit called by: "+playerTurn+" at: "+(place.getX()-1)+", "+(place.getY()-1));
             if(place.hasShip()){
                 if(!place.ship().isSunk()) {
                     if(playerTurn){
@@ -334,7 +312,6 @@ public class gameActivity extends AppCompatActivity {
          */
         public void gameOver(int numOfShots){
             playerBoardView.removeAllBoardTouchListeners();
-            System.out.println("**************GAME OVER!!!!!!!!**********************");
             gameOver.start();
             v.vibrate(1000);
         }
@@ -364,7 +341,6 @@ public class gameActivity extends AppCompatActivity {
                 placedShipsView.invalidate();
                 shipsView.invalidate();
             }
-            System.out.println("Ship selected! name: "+shipSelected.name()+"******************************");
         }
     }
 
@@ -376,7 +352,8 @@ public class gameActivity extends AppCompatActivity {
             if(shipSelected == null) {
                 if (playerBoard.at(x + 1, y + 1).hasShip()) {
                     //if head of ship is touched reorient
-                    if(playerBoard.at(x + 1, y + 1).ship().head().getX() == x + 1 && playerBoard.at(x + 1, y + 1).ship().head().getY() == y + 1) {
+                    if(playerBoard.at(x + 1, y + 1).ship().head().getX() == x + 1
+                            && playerBoard.at(x + 1, y + 1).ship().head().getY() == y + 1) {
                         reorientShip(playerBoard.at(x + 1, y + 1).ship());
                     }else {
                         shipSelected = playerBoard.at(x+1, y+1).ship();
@@ -398,7 +375,6 @@ public class gameActivity extends AppCompatActivity {
         }
 
         private boolean reorientShip(Battleship ship){
-            System.out.println("ship attempting to reorient: " + ship.name() + "************************************");
             Place head = ship.head();
             boolean wasHorizontal = ship.isHorizontal();
             ship.removePlaces();
