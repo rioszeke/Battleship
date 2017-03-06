@@ -115,7 +115,11 @@ class PlacedShipsView extends View{
         for (Place place : board.places()) {
             RectF rect = createRectF(place.getX() - 1, place.getY() - 1);
             if (place.hasShip()) {
-                paint.setColor(Color.RED);
+                if(place.ship().head().getX() == place.getX() && place.ship().head().getY() == place.getY()){
+                    paint.setColor(Color.GREEN);
+                }else {
+                    paint.setColor(Color.RED);
+                }
                 canvas.drawRoundRect(rect, 10, 10, paint);
             }
         }

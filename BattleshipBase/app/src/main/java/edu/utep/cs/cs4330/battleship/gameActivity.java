@@ -137,6 +137,17 @@ public class gameActivity extends AppCompatActivity {
         else{
             restartGame(playerBoard, opponentBoardView);
             restartGame(opponentBoard, playerBoardView);
+            gameStarted = false;
+            moveToFragment(difficultyFrag);
+        }
+    }
+
+    @Override
+    public void onBackPressed(){
+        if(gameStarted) {
+            FragmentManager fm = getFragmentManager();
+            promptFragment = new MyDialogFragment();
+            promptFragment.show(fm, "sample fragment");
         }
     }
 
@@ -177,7 +188,7 @@ public class gameActivity extends AppCompatActivity {
     private void moveToFragment(Fragment fragment){
         System.out.println("Move to Fragment called!! moving to: "+fragment.getClass().getSimpleName()+"************************");
         getFragmentManager().beginTransaction()
-                .replace(R.id.fragment_frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
+                .replace(R.id.fragment_frame, fragment, fragment.getClass().getSimpleName())/*.addToBackStack(null)*/.commit();
     }
 
     public SelectShipsView getSelectShipsView(){
@@ -373,23 +384,13 @@ public class gameActivity extends AppCompatActivity {
                 }//else do nothing
 
             }else{//going to place ship that has been selected
-                //if ship is already on the board so replace
+                //if ship is already on the board replace
                 if(shipSelected.isDeployed()) {
-                    //Battleship ship = shipSelected;
-                    System.out.println("ship attempting to replace ship: " + shipSelected.name() + "************************************");
-                    //Place head = ship.head();
-                    Boolean wasHorizontal = shipSelected.isHorizontal();
-                    shipSelected.removePlaces();
-                    if (playerBoard.placeShip(shipSelected, x + 1, y + 1, wasHorizontal)) {
-                        placedShipsView.invalidate();
-                        shipsView.invalidate();
-                        shipSelected = null;
-                    }
+                    replaceShip(shipSelected, x, y);
                 }else{
                     //place ship that has been selected
                     if(playerBoard.placeShip(shipSelected, x+1, y+1, true)){
-                        placedShipsView.invalidate();
-                        shipsView.invalidate();
+                        refreshView();
                         shipSelected = null;
                     }
                 }
@@ -399,17 +400,36 @@ public class gameActivity extends AppCompatActivity {
         private boolean reorientShip(Battleship ship){
             System.out.println("ship attempting to reorient: " + ship.name() + "************************************");
             Place head = ship.head();
-            Boolean wasHorizontal = ship.isHorizontal();
+            boolean wasHorizontal = ship.isHorizontal();
             ship.removePlaces();
             //if ship was placed successfully
             if (playerBoard.placeShip(ship, head.getX(), head.getY(), !wasHorizontal)) {
-                placedShipsView.invalidate();
-                shipsView.invalidate();
+                refreshView();
                 return true;
             } else {//if ship was not able to be placed successfully
                 playerBoard.placeShip(ship, head.getX(), head.getY(), wasHorizontal);
                 return false;
             }
+        }
+
+        private boolean replaceShip(Battleship ship, int x, int y){
+            Place head = ship.head();
+            boolean wasHorizontal = ship.isHorizontal();
+            ship.removePlaces();
+            if(playerBoard.placeShip(ship, x+1, y+1, wasHorizontal)){
+                refreshView();
+                shipSelected = null;
+                return true;
+            }
+            else{
+                playerBoard.placeShip(ship, head.getX(), head.getY(), wasHorizontal);
+                return false;
+            }
+
+        }
+        protected void refreshView(){
+            placedShipsView.invalidate();
+            shipsView.invalidate();
         }
     }
 
