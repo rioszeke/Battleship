@@ -21,11 +21,15 @@ import java.util.List;
  */
 public class difficultyFragment extends Fragment implements View.OnClickListener{
 
-    private Button fragment_btn_1;
-    private Button fragment_btn_2;
+    private Button fragment_difficult_btn;
+    private Button fragment_easy_btn;
+    private Button fragment_done_btn;
+    private SelectShipsView shipsView;
+    private PlacedShipsView placedShipsView;
+
     private OnFragmentInteractionListener mListener;
 
-    private final List<DifficultySelectListener> listeners = new ArrayList<>();
+    private final List<ButtonSelectListener> listeners = new ArrayList<>();
 
     public difficultyFragment() {
         // Required empty public constructor
@@ -35,67 +39,75 @@ public class difficultyFragment extends Fragment implements View.OnClickListener
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_difficulty, container, false);
-        fragment_btn_1 = (Button) view.findViewById(R.id.fragment_button_1);
-        fragment_btn_2 = (Button) view.findViewById(R.id.fragment_button_2);
-        fragment_btn_1.setOnClickListener(this);
-        fragment_btn_2.setOnClickListener(this);
+        fragment_difficult_btn = (Button) view.findViewById(R.id.fragment_difficult_btn);
+        fragment_easy_btn = (Button) view.findViewById(R.id.fragment_easy_btn);
+        fragment_done_btn = (Button) view.findViewById(R.id.fragment_done_btn);
+        fragment_difficult_btn.setOnClickListener(this);
+        fragment_easy_btn.setOnClickListener(this);
+        fragment_done_btn.setOnClickListener(this);
         return view;
     }
 
-//    // TODO: Rename method, update argument and hook method into UI event
-//    public void onButtonPressed(Uri uri) {
-//        if (mListener != null) {
-//            mListener.onFragmentInteraction(uri);
-//        }
-//    }
+    @Override
+    public void onResume(){
+        super.onResume();
+//        try {
+        shipsView = ((gameActivity) this.getActivity()).getSelectShipsView();
+        placedShipsView = ((gameActivity) this.getActivity()).getPlacedShipsView();
 
-//    @Override
-//    public void onAttach(Context context) {
-//        super.onAttach(context);
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
-//    }
+//            playerBoard = ((gameActivity) this.getActivity()).getPlayerBoard();
+//            opponentBoard = ((gameActivity) this.getActivity()).getOpponentBoard();
 
-//    @Override
-//    public void onDetach() {
-//        super.onDetach();
-//        mListener = null;
-//    }
+//        }catch(Exception e){
+//            if(playerBoardView == null){
+//                System.out.println("playerBoardView was null");
+//            }
+//            if(opponentBoardView == null){
+//                System.out.println("opponentBoardView was null");
+//            }
+//            if(playerBoard == null){
+//                System.out.println("playerBoard was null");
+//            }
+//            if(opponentBoard == null){
+//                System.out.println("opponentBoard was null");
+//            }
+//        }
+
+    }
 
     public void onClick(View v){
         switch(v.getId()){
-            case R.id.fragment_button_1:
+            case R.id.fragment_easy_btn:
                 //Fragment fragment1 = new BlankFragment();
                 //moveToFragment(fragment1);
-                notifyDifficulty("Easy");
+                notifyButtonClick("Easy");
                 break;
-            case R.id.fragment_button_2:
+            case R.id.fragment_difficult_btn:
 //                Fragment fragment2 = new BlankFragment2();
 //                moveToFragment(fragment2);
-                notifyDifficulty("Hard");
+                notifyButtonClick("Difficult");
+                break;
+            case R.id.fragment_done_btn:
+                notifyButtonClick("Done");
                 break;
         }
     }
 
-    public interface DifficultySelectListener{
+    public interface ButtonSelectListener{
 
-        public void difficultySelected(String string);
+        public void ButtonSelected(String string);
     }
 
     /** Register the given listener. */
-    public void addDifficultyListener(DifficultySelectListener listener) {
+    public void addButtonListener(ButtonSelectListener listener) {
         if (!listeners.contains(listener)) {
             listeners.add(listener);
         }
     }
 
-    public void notifyDifficulty(String string){
-        for (DifficultySelectListener listener: listeners) {
-            listener.difficultySelected(string);
+    public void notifyButtonClick(String string){
+        for (ButtonSelectListener listener: listeners) {
+            listener.ButtonSelected(string);
         }
     }
     /**

@@ -109,6 +109,10 @@ public class Board /*implements Runnable*/{
         return ships;
     }
 
+    public Iterable<Battleship> getDefaultShips(){
+        return DEFAULT_SHIPS;
+    }
+
 
     /**
      * Creates the standard ships and adds them to
@@ -160,6 +164,15 @@ public class Board /*implements Runnable*/{
         }
     }
 
+    public boolean defaultShipsDeployed(){
+        for(Battleship ship : getDefaultShips()){
+            if(!ship.isDeployed()){
+                return false;
+            }
+        }
+        return true;
+    }
+
     /**
      * Places the list of ships in a random orientation and order
      */
@@ -184,16 +197,16 @@ public class Board /*implements Runnable*/{
     public boolean placeShip(Battleship ship, int x, int y, boolean dir/*true if horizontal*/){
         int len = ship.size();
         if(dir
-            && (0 < x)&&(x + len - 1 <= this.size)
-            && !isPlacementOccuppied(ship, x, y, dir)){
+                && (0 < x)&&(x + len - 1 <= this.size)
+                && !isPlacementOccuppied(ship, x, y, dir)){
             for(int i = x; i < x+len; i++){
                 at(i, y).placeShip(ship);
             }
             return true;
         }
         if(!dir
-              &&(0 < y) && (y+len-1 <= this.size)
-              && !isPlacementOccuppied(ship,x, y, dir)){
+                &&(0 < y) && (y+len-1 <= this.size)
+                && !isPlacementOccuppied(ship,x, y, dir)){
             for(int i = y; i < y+len; i++){
                 at(x, i).placeShip(ship);
             }
@@ -216,14 +229,18 @@ public class Board /*implements Runnable*/{
         if(dir){
             for(int i = x; i < x+len; i++){
                 if(!at(i, y).isEmpty()){
-                    return true;
+                    if(!at(i,y).ship().name().equals(ship.name())) {
+                        return true;
+                    }
                 }
             }
         }
         else{
             for(int i = y; i < y+len; i++){
                 if(!at(x,i).isEmpty()){
-                    return true;
+                    if(!at(x,i).ship().name().equals(ship.name())) {
+                        return true;
+                    }
                 }
             }
         }
@@ -305,8 +322,16 @@ public class Board /*implements Runnable*/{
         if(!listeners.contains(listener)){
             listeners.add(listener);
         }
+        int i = 0;
+        for(BoardChangeListener listener1 : listeners){
+            i++;
+        }
+        System.out.println("board change listener added! #boardChange listeners: "+ i);
     }
 
+    public boolean hasBoardChangeListener(){
+        return !listeners.isEmpty();
+    }
     /**
      * Removes specified BoardChangeListener
      */

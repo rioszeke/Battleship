@@ -14,10 +14,13 @@ import android.widget.TextView;
 
 public class gameActivity extends AppCompatActivity {
 
+    private boolean gameStarted = false;
     private Board playerBoard;
     private Board opponentBoard;
     private BoardView opponentBoardView;
     private BoardView playerBoardView;
+    private SelectShipsView shipsView;
+    private PlacedShipsView placedShipsView;
     private Thread playerViewThread;
     private Thread opponentViewThread;
     private Thread boardThread;
@@ -36,54 +39,52 @@ public class gameActivity extends AppCompatActivity {
     private Boolean playerTurn;
 
     private Strategy strategy;
+    private Battleship shipSelected;
 
     private difficultyFragment difficultyFrag;
     private playFragment playFrag;
 
-    private class DifficultySelectListener implements difficultyFragment.DifficultySelectListener{
-
-        @Override
-        public void difficultySelected(String difficulty){
-            System.out.println("The difficulty was: "+difficulty);
-
-            playerTurn = true;
-            playerBoard = new Board(10);
-            playerBoard.placeShips();
-            opponentBoard = new Board(10);
-            opponentBoard.placeShips();
-            playerBoard.addBoardChangeListener(new BoardChangeListener());
-            opponentBoard.addBoardChangeListener(new BoardChangeListener());
-
-
-            /* modify when another strategy has been created */
-            if(difficulty.equals("Hard")){
-                strategy = new RandomStrategy(playerBoard);
-            }
-            else{
-                strategy = new RandomStrategy(playerBoard);
-            }
-
-            startGame();
-        }
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        System.out.println("onCreate called!!***************************************************");
         setContentView(R.layout.activity_main);
-        difficultyFrag = new difficultyFragment();
-        difficultyFrag.addDifficultyListener(new DifficultySelectListener());
-
-        getFragmentManager().beginTransaction()
-                .replace(R.id.fragment_frame, difficultyFrag, difficultyFrag.getClass().getSimpleName()).commit();
 
         opponentContent = MediaPlayer.create(findViewById(R.id.fragment_frame).getContext(), R.raw.woohoo);
         opponentSad = MediaPlayer.create(findViewById(R.id.fragment_frame).getContext(), R.raw.doh2);
         opponentAngry = MediaPlayer.create(findViewById(R.id.fragment_frame).getContext(), R.raw.aaaahh);
         gameOver = MediaPlayer.create(findViewById(R.id.fragment_frame).getContext(), R.raw.about_time);
         v = (Vibrator) findViewById(R.id.fragment_frame).getContext().getSystemService(Context.VIBRATOR_SERVICE);
-        
+
+        playerTurn = true;
+        playerBoard = new Board(10);
+
+        difficultyFrag = new difficultyFragment();
+        difficultyFrag.addButtonListener(new ButtonSelectListener());
+
+        getFragmentManager().beginTransaction()
+                .replace(R.id.fragment_frame, difficultyFrag, difficultyFrag.getClass().getSimpleName()).commit();
+
+    }
+    private void startGame() {
+        System.out.println("start game called!*****************");
+        opponentBoard = new Board(10);
+        opponentBoard.placeShips();
+        if(!playerBoard.hasBoardChangeListener()) {
+            playerBoard.addBoardChangeListener(new BoardChangeListener());
+        }
+        if(!opponentBoard.hasBoardChangeListener()) {
+            opponentBoard.addBoardChangeListener(new BoardChangeListener());
+        }
+        startThreads();
+        gameStarted = true;
+        playFrag = new playFragment();
+        moveToFragment(playFrag);
+    }
+
+    private void startThreads(){
+        System.out.println("Threads started!!!");
+        playerViewThread = new Thread(playerBoardView);
+        opponentViewThread = new Thread(opponentBoardView);
         thread = new Thread(){
             @Override
             public void run(){
@@ -93,14 +94,16 @@ public class gameActivity extends AppCompatActivity {
                         runOnUiThread(new Runnable(){
                             public void run(){
                                 numShots.setText("Number of Shots: "+ opponentBoard.numOfShots());
-                                if(!playerBoard.isGameOver()&&!opponentBoard.isGameOver()) {
+                                if(!playerBoard.isGameOver()&&!opponentBoard.isGameOver() && gameStarted) {
                                     if (playerTurn) {
                                         if (!playerBoardView.hasBoardTouchListener()) {
                                             System.out.println("Added board touch listener******************************************");
                                             playerBoardView.addBoardTouchListener(new gameActivity.BoardTouchListener());
                                         }
+                                        System.out.println("Player.nextMove called!!********************");
                                         player.nextMove();
-                                    } else {
+                                    }
+                                    if(!playerTurn){
                                         if (!opponentBoardView.hasBoardTouchListener()) {
                                             opponentBoardView.addBoardTouchListener(new gameActivity.BoardTouchListener());
                                         }
@@ -115,24 +118,6 @@ public class gameActivity extends AppCompatActivity {
                 }
             }
         };
-////
-//        thread.start();
-//        playerViewThread.start();
-//        opponentViewThread.start();
-
-    }
-    private void startGame() {
-        System.out.println("start game called!*****************");
-
-        startThreads();
-
-        playFrag = new playFragment();
-        moveToFragment(playFrag);
-    }
-
-    private void startThreads(){
-        playerViewThread = new Thread(playerBoardView);
-        opponentViewThread = new Thread(opponentBoardView);
         thread.start();
         playerViewThread.start();
         opponentViewThread.start();
@@ -162,6 +147,8 @@ public class gameActivity extends AppCompatActivity {
     public void yesClicked(View view){
         restartGame(playerBoard, opponentBoardView);
         restartGame(opponentBoard, playerBoardView);
+        gameStarted = false;
+        moveToFragment(difficultyFrag);
         promptFragment.dismiss();
     }
 
@@ -183,7 +170,6 @@ public class gameActivity extends AppCompatActivity {
      */
     private void restartGame(Board board, BoardView boardView){
         board.reset();
-        board.placeShips();
         boardView.removeAllBoardTouchListeners();
         boardView.invalidate();
     }
@@ -194,11 +180,24 @@ public class gameActivity extends AppCompatActivity {
                 .replace(R.id.fragment_frame, fragment, fragment.getClass().getSimpleName()).addToBackStack(null).commit();
     }
 
+    public SelectShipsView getSelectShipsView(){
+        shipsView = (SelectShipsView) findViewById(R.id.shipsToPlace);
+        shipsView.setBoard(playerBoard);
+        shipsView.addShipSelectListener(new shipSelectListener());
+        return shipsView;
+    }
+
+    public PlacedShipsView getPlacedShipsView(){
+        placedShipsView = (PlacedShipsView) findViewById(R.id.placedShipsView);
+        placedShipsView.setBoard(playerBoard);
+        placedShipsView.addPlacedListener(new PlacedListener());
+        return placedShipsView;
+    }
 
     public BoardView getPlayerBoardView(){
         System.out.println("getPlayerBoardView called!!********************");
         playerBoardView = (BoardView) findViewById(R.id.playerBoardView);
-        playerBoardView.setBoard(opponentBoard, true);
+        playerBoardView.setBoard(opponentBoard, false);
         player = new humanPlayer(opponentBoard, playerTurn, playerBoardView);
         return playerBoardView;
     }
@@ -210,7 +209,7 @@ public class gameActivity extends AppCompatActivity {
     public BoardView getOpponentBoardView(){
         System.out.println("getOpponentBoardView called!!!**********************");
         opponentBoardView = (BoardView) findViewById(R.id.opponentBoardView);
-        opponentBoardView.setBoard(playerBoard, false);
+        opponentBoardView.setBoard(playerBoard, true);
         if(strategy != null) {
             opponent = new ComputerPlayer(playerBoard, !playerTurn, opponentBoardView, strategy);
         }
@@ -233,22 +232,51 @@ public class gameActivity extends AppCompatActivity {
     }
 
 
+    private class ButtonSelectListener implements difficultyFragment.ButtonSelectListener{
+
+        @Override
+        public void ButtonSelected(String button){
+
+             /* modify when another strategy has been created */
+            if(button.equals("Difficult")){
+                strategy = new RandomStrategy(playerBoard);
+            }
+            if(button.equals("Easy")){
+                strategy = new RandomStrategy(playerBoard);
+            }
+
+            if(button.equals("Done")&& playerBoard.defaultShipsDeployed() && strategy != null){
+                startGame();
+            }
+        }
+    }
+
+
     /**
      * BoardTouchListener to remove and add when button is clicked
      */
     private class BoardTouchListener implements BoardView.BoardTouchListener {
         @Override
         public void onTouch(int x, int y) {
-            System.out.println("On touch called!! player turn:"+playerTurn);
+            System.out.println("On touch called!! player's turn:"+playerTurn);
             if (playerTurn) {
                 if (!player.getBoard().at(x + 1, y + 1).isHit()) {
                     System.out.println("player took a shot!*********************");
-                    player.hit(x + 1, y + 1);
+                    if(!player.hit(x + 1, y + 1)){
+                        playerTurn = !playerTurn;
+                        System.out.println("Player turn switched from: "+ !playerTurn+" to: "+playerTurn);
+                    }
+                    player.hit(x+1, y+1);
                 }
-            }else {
+            }
+            if(!playerTurn){
                 if (!opponent.getBoard().at(x + 1, y + 1).isHit()) {
                     System.out.println("Computer took a shot!*****************");
-                    opponent.hit(x + 1, y + 1);
+                    if(!opponent.hit(x + 1, y + 1)){
+                        playerTurn = !playerTurn;
+                        System.out.println("Player turn switched from: "+ !playerTurn+" to: "+playerTurn);
+                    }
+                    opponent.hit(x+1, y+1);
                 }
             }
         }
@@ -266,6 +294,7 @@ public class gameActivity extends AppCompatActivity {
          * @param numOfShots
          */
         public void hit(Place place, int numOfShots){
+            System.out.println("hit called by: "+playerTurn+" at: "+(place.getX()-1)+", "+(place.getY()-1));
             if(place.hasShip()){
                 if(!place.ship().isSunk()) {
                     if(playerTurn){
@@ -283,7 +312,6 @@ public class gameActivity extends AppCompatActivity {
                 }else{
                     opponentSad.start();
                 }
-                playerTurn = !playerTurn;
             }
             opponentBoardView.invalidate();
             playerBoardView.invalidate();
@@ -314,4 +342,78 @@ public class gameActivity extends AppCompatActivity {
             v.vibrate(500);
         }
     }
+
+    protected class shipSelectListener implements SelectShipsView.ShipSelectListener{
+
+        @Override
+        public void onSelect(Battleship ship){
+            shipSelected = ship;
+            if(shipSelected.isDeployed()){
+                shipSelected.removePlaces();
+                placedShipsView.invalidate();
+                shipsView.invalidate();
+            }
+            System.out.println("Ship selected! name: "+shipSelected.name()+"******************************");
+        }
+    }
+
+    protected class PlacedListener implements PlacedShipsView.PlacedListener{
+
+        @Override
+        public void onTouch(int x, int y){
+            //going to reorient or replace
+            if(shipSelected == null) {
+                if (playerBoard.at(x + 1, y + 1).hasShip()) {
+                    //if head of ship is touched reorient
+                    if(playerBoard.at(x + 1, y + 1).ship().head().getX() == x + 1 && playerBoard.at(x + 1, y + 1).ship().head().getY() == y + 1) {
+                        reorientShip(playerBoard.at(x + 1, y + 1).ship());
+                    }else {
+                        shipSelected = playerBoard.at(x+1, y+1).ship();
+                    }
+                }//else do nothing
+
+            }else{//going to place ship that has been selected
+                //if ship is already on the board so replace
+                if(shipSelected.isDeployed()) {
+                    //Battleship ship = shipSelected;
+                    System.out.println("ship attempting to replace ship: " + shipSelected.name() + "************************************");
+                    //Place head = ship.head();
+                    Boolean wasHorizontal = shipSelected.isHorizontal();
+                    shipSelected.removePlaces();
+                    if (playerBoard.placeShip(shipSelected, x + 1, y + 1, wasHorizontal)) {
+                        placedShipsView.invalidate();
+                        shipsView.invalidate();
+                        shipSelected = null;
+                    }
+                }else{
+                    //place ship that has been selected
+                    if(playerBoard.placeShip(shipSelected, x+1, y+1, true)){
+                        placedShipsView.invalidate();
+                        shipsView.invalidate();
+                        shipSelected = null;
+                    }
+                }
+            }
+        }
+
+        private boolean reorientShip(Battleship ship){
+            System.out.println("ship attempting to reorient: " + ship.name() + "************************************");
+            Place head = ship.head();
+            Boolean wasHorizontal = ship.isHorizontal();
+            ship.removePlaces();
+            //if ship was placed successfully
+            if (playerBoard.placeShip(ship, head.getX(), head.getY(), !wasHorizontal)) {
+                placedShipsView.invalidate();
+                shipsView.invalidate();
+                return true;
+            } else {//if ship was not able to be placed successfully
+                playerBoard.placeShip(ship, head.getX(), head.getY(), wasHorizontal);
+                return false;
+            }
+        }
+    }
+
+
+
+
 }

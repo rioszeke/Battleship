@@ -46,31 +46,28 @@ public class playFragment extends Fragment {
     @Override
     public void onResume(){
         super.onResume();
-        try {
+//        try {
             playerBoardView = ((gameActivity) this.getActivity()).getPlayerBoardView();
             opponentBoardView = ((gameActivity) this.getActivity()).getOpponentBoardView();
 
-            playerBoard = ((gameActivity) this.getActivity()).getPlayerBoard();
-            opponentBoard = ((gameActivity) this.getActivity()).getOpponentBoard();
-
-            playerBoardView.setBoard(opponentBoard, false);
-            opponentBoardView.setBoard(playerBoard, true);
+//            playerBoard = ((gameActivity) this.getActivity()).getPlayerBoard();
+//            opponentBoard = ((gameActivity) this.getActivity()).getOpponentBoard();
 
             numShots = ((gameActivity) this.getActivity()).getShotsView();
-        }catch(Exception e){
-            if(playerBoardView == null){
-                System.out.println("playerBoardView was null");
-            }
-            if(opponentBoardView == null){
-                System.out.println("opponentBoardView was null");
-            }
-            if(playerBoard == null){
-                System.out.println("playerBoard was null");
-            }
-            if(opponentBoard == null){
-                System.out.println("opponentBoard was null");
-            }
-        }
+//        }catch(Exception e){
+//            if(playerBoardView == null){
+//                System.out.println("playerBoardView was null");
+//            }
+//            if(opponentBoardView == null){
+//                System.out.println("opponentBoardView was null");
+//            }
+//            if(playerBoard == null){
+//                System.out.println("playerBoard was null");
+//            }
+//            if(opponentBoard == null){
+//                System.out.println("opponentBoard was null");
+//            }
+//        }
 
     }
 }

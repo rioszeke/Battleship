@@ -297,6 +297,11 @@ public class BoardView extends View implements Runnable{
         if (!listeners.contains(listener)) {
             listeners.add(listener);
         }
+        int i = 0;
+        for(BoardTouchListener listener1 : listeners){
+            i++;
+        }
+        System.out.println("Board touch listener added #Board touch listeners: "+ i);
     }
 
     public boolean hasBoardTouchListener(){
@@ -320,49 +325,4 @@ public class BoardView extends View implements Runnable{
         removeAllBoardTouchListeners();
         System.out.println("Board touch Listener removed!!*********************");
     }
-
-//    /**
-//     * Nested class implements BoardChangeListener interface
-//     * Observes and reports changes to the board
-//     */
-//    private class BoardChangeListener implements Board.BoardChangeListener{
-//
-//        /** will force onDraw to be called again with
-//         * invalidate().
-//         * @param place
-//         * @param numOfShots
-//         */
-//        public void hit(Place place, int numOfShots){
-//            if(place.hasShip()){
-//                if(!place.ship().isSunk()) {
-//                    shipHit.start();
-//                    v.vibrate(100);
-//                }
-//            }
-//            else{
-//
-//                placeHit.start();
-//            }
-//            invalidate();
-//        }
-//
-//        /**
-//         * Clears listeners, plays sound and vibrates
-//         * @param numOfShots
-//         */
-//        public void gameOver(int numOfShots){
-//            listeners.clear();
-//            gameOver.start();
-//            v.vibrate(1000);
-//        }
-//
-//        /**
-//         * Plays sound and vibrates
-//         * @param ship
-//         */
-//        public void shipSunk(Battleship ship){
-//            shipSunk.start();
-//            v.vibrate(500);
-//        }
-//    }
 }

@@ -35,6 +35,7 @@ class ComputerPlayer extends Player {
         if(playerBoardView == null){
             System.out.println("According to player computer playerBoardView is null********************************************************");
         }
+        System.out.println("Computer generated next hit and is hitting at: "+(nextHit.getX()-1)+", "+(nextHit.getY()-1));
         playerBoardView.notifyBoardTouch(nextHit.getX()-1, nextHit.getY()-1);
     }
 }
