@@ -100,6 +100,11 @@ public class gameActivity extends AppCompatActivity {
                                     }
                                     if(!playerTurn){
                                         System.out.println("opponents turn");
+                                        try{
+                                            thread.sleep(800);
+                                        }catch(Exception e){
+                                            System.out.println(e);
+                                        }
                                         if (!opponentBoardView.hasBoardTouchListener()) {
                                             opponentBoardView.addBoardTouchListener(new gameActivity.BoardTouchListener());
                                         }
@@ -132,8 +137,8 @@ public class gameActivity extends AppCompatActivity {
             promptFragment.show(fm, "sample fragment");
         }
         else{
-            restartGame(playerBoard, opponentBoardView);
-            restartGame(opponentBoard, playerBoardView);
+            resetGame(playerBoard, opponentBoardView);
+            resetGame(opponentBoard, playerBoardView);
             gameStarted = false;
             moveToFragment(difficultyFrag);
         }
@@ -153,8 +158,8 @@ public class gameActivity extends AppCompatActivity {
      * @param view
      */
     public void yesClicked(View view){
-        restartGame(playerBoard, opponentBoardView);
-        restartGame(opponentBoard, playerBoardView);
+        resetGame(playerBoard, opponentBoardView);
+        resetGame(opponentBoard, playerBoardView);
         gameStarted = false;
         moveToFragment(difficultyFrag);
         promptFragment.dismiss();
@@ -176,7 +181,7 @@ public class gameActivity extends AppCompatActivity {
      * @param board
      * @param boardView
      */
-    private void restartGame(Board board, BoardView boardView){
+    private void resetGame(Board board, BoardView boardView){
         board.reset();
         boardView.removeAllBoardTouchListeners();
         boardView.invalidate();
@@ -408,8 +413,4 @@ public class gameActivity extends AppCompatActivity {
             shipsView.invalidate();
         }
     }
-
-
-
-
 }
