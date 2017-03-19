@@ -5,39 +5,24 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import android.graphics.drawable.ShapeDrawable;
-import android.graphics.drawable.shapes.OvalShape;
-import android.media.MediaPlayer;
-import android.os.Build;
 import android.os.Vibrator;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewTreeObserver;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A special view class to display a battleship board as a2D grid.
- *
- * @see Board
+ * Created by riosz on 3/5/2017.
  */
-public class BoardView extends View implements Runnable{
 
+class shipsToPlaceView extends View {
     /** Listeners to be notified upon board touches. */
-    private final List<BoardTouchListener> listeners = new ArrayList<>();
+    private final List<ShipPlaceListener> listeners = new ArrayList<>();
 
     /** Board background color. */
     private final int boardColor = Color.rgb(102, 163, 255);
-
-    /** Boolean to draw board different colors */
-    private Boolean playerBoard;
-
-    /** Vibrates phone, requires app permission */
-    protected Vibrator v = (Vibrator) this.getContext().getSystemService(Context.VIBRATOR_SERVICE);
-
 
     /** Board background paint. */
     private final Paint boardPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -55,15 +40,11 @@ public class BoardView extends View implements Runnable{
         boardLinePaint.setStrokeWidth(2);
     }
 
-    /** Board to be displayed by this view. */
-    private Board board;
-
     /** Size of the board. */
-    private int boardSize;
-
+    private final int boardSize = 5;
 
     /** Callback interface to listen for board touches. */
-    public interface BoardTouchListener {
+    public interface ShipPlaceListener {
 
         /**
          * Called when a place of the board is touched.
@@ -72,72 +53,31 @@ public class BoardView extends View implements Runnable{
          * @param x 0-based column index of the touched place
          * @param y 0-based row index of the touched place
          */
-        void onTouch(int x, int y);
+        void onPlace(int x, int y);
     }
 
     /** Create a new board view to be run in the given context. */
-    public BoardView(Context context) {
+    public shipsToPlaceView(Context context) {
         super(context);
     }
 
     /** Create a new board view with the given attribute set. */
-    public BoardView(Context context, AttributeSet attrs) {
+    public shipsToPlaceView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
     /** Create a new board view with the given attribute set and style. */
-    public BoardView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public shipsToPlaceView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
-    /** Set the board to to be displayed by this view. */
-    public void setBoard(Board board, Boolean playerBoard) {
-        this.board = board;
-        this.boardSize = board.size();
-        this.playerBoard = playerBoard;
-        //board.addBoardChangeListener(new MainActivity.BoardChangeListener());
-        //board.placeShips();
-    }
-
-    /**
-     * Debugging method to print board and status of places
-     */
-    private void printBoard(){
-        int i = 0;
-        for(Place place: board.places()){
-            String hit = "";
-            if(place.isHitShip()){
-                hit = "SHIP";
-            }
-            else{
-                if(place.isHit()) {
-                    hit = "!hit";
-                }
-            }
-            System.out.print("["+place.getX()+","+place.getY()+":"+hit+"]");
-            i++;
-            if(i == board.size()){
-                i = 0;
-                System.out.println("");
-            }
-        }
-    }
-
-    /**
-     * Overridden here to detect a board touch. When the board is
-     * touched, the corresponding place is identified,
-     * and registered listeners are notified.
-     *
-     * @see BoardTouchListener
-     */
     @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        if(!playerBoard) {
+    public boolean onTouchEvent(MotionEvent event){
             switch (event.getAction()) {
                 case MotionEvent.ACTION_UP:
                     int xy = locatePlace(event.getX(), event.getY());
                     if (xy >= 0 && xy / 100 < boardSize && xy % 100 < boardSize) {
-                        notifyBoardTouch(xy / 100, xy % 100);
+                        notifyShipPlace(xy / 100, xy % 100);
                     }
                     break;
                 case MotionEvent.ACTION_DOWN:
@@ -146,25 +86,6 @@ public class BoardView extends View implements Runnable{
                     break;
             }
             return true;
-        }
-        return false;
-    }
-
-    /**
-     * Class is made runnable so that it
-     * can run separately on thread
-     */
-    @Override
-    public void run(){
-        while(true){
-            try{
-                Thread.sleep(1);
-            }
-            catch(Exception e){
-                e.printStackTrace();
-            }
-            //this.invalidate();
-        }
     }
 
     /** Overridden here to draw a 2-D representation of the board. */
@@ -172,9 +93,7 @@ public class BoardView extends View implements Runnable{
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         drawGrid(canvas);
-        if(board != null) {
-            drawPlaces(canvas);
-        }
+        drawPlaces(canvas);
     }
 
     /**
@@ -186,46 +105,9 @@ public class BoardView extends View implements Runnable{
     private void drawPlaces(Canvas canvas) {
         Paint paint = new Paint();
         paint.setStyle(Paint.Style.FILL);
-        if(!playerBoard) {
-            for (Place place : board.places()) {
-                RectF rect = createRectF(place.getX() - 1, place.getY() - 1);
-                if (place.isHitShip()) {
-                    paint.setColor(Color.RED);
-                    canvas.drawRoundRect(rect, 10, 10, paint);
-                } else {
-                    if (place.isHit()) {
-                        paint.setColor(Color.BLUE);
-                        canvas.drawRoundRect(rect, 10, 10, paint);
-                    } else {
-                        paint.setColor(Color.GREEN);
-                        canvas.drawRoundRect(rect, 10, 10, paint);
-                    }
-                }
-            }
-        }
-        else{
-            for (Place place : board.places()) {
-                RectF rect = createRectF(place.getX() - 1, place.getY() - 1);
-                if (place.isHitShip()) {
-                    paint.setColor(Color.RED);
-                    canvas.drawRoundRect(rect, 10, 10, paint);
-                } else {
-                    if (place.isHit()) {
-                        paint.setColor(Color.BLUE);
-                        canvas.drawRoundRect(rect, 10, 10, paint);
-                    } else {
-                        if(place.hasShip()){
-                            paint.setColor(Color.BLACK);
-                            canvas.drawRoundRect(rect,10,10,paint);
-                        }
-                        else {
-                            paint.setColor(Color.GREEN);
-                            canvas.drawRoundRect(rect, 10, 10, paint);
-                        }
-                    }
-                }
-            }
-        }
+        RectF rect = createRectF(0, 0);
+        paint.setColor(Color.RED);
+        canvas.drawRoundRect(rect, 10, 10, paint);
     }
 
     /**
@@ -264,8 +146,6 @@ public class BoardView extends View implements Runnable{
         return Math.min(getMeasuredWidth(), getMeasuredHeight()) / (float) boardSize;
     }
 
-
-
     /** Calculate the number of horizontal/vertical lines. */
     private int numOfLines() {
         return boardSize + 1;
@@ -291,36 +171,31 @@ public class BoardView extends View implements Runnable{
         }
         return -1;
     }
-
     /** Register the given listener. */
-    public void addBoardTouchListener(BoardTouchListener listener) {
+    public void addShipPlaceListener(ShipPlaceListener listener) {
         if (!listeners.contains(listener)) {
             listeners.add(listener);
         }
-        int i = 0;
-        for(BoardTouchListener listener1 : listeners){
-            i++;
-        }
     }
 
-    public boolean hasBoardTouchListener(){
+    public boolean hasShipPlaceListener(){
         return !listeners.isEmpty();
     }
 
     /** Unregister the given listener. */
-    public void removeBoardTouchListener(BoardTouchListener listener) {
+    public void removeShipPlaceListener(ShipPlaceListener listener) {
         listeners.remove(listener);
     }
 
-    public void removeAllBoardTouchListeners(){
+    public void removeAllShipPlaceListeners(){
         listeners.clear();
     }
 
+
     /** Notify all registered listeners. */
-    protected void notifyBoardTouch(int x, int y) {
-        for (BoardTouchListener listener: listeners) {
-            listener.onTouch(x, y);
+    protected void notifyShipPlace(int x, int y) {
+        for (ShipPlaceListener listener: listeners) {
+            listener.onPlace(x, y);
         }
-        removeAllBoardTouchListeners();
     }
 }

@@ -109,6 +109,10 @@ public class Board /*implements Runnable*/{
         return ships;
     }
 
+    public Iterable<Battleship> getDefaultShips(){
+        return DEFAULT_SHIPS;
+    }
+
 
     /**
      * Creates the standard ships and adds them to
@@ -137,6 +141,39 @@ public class Board /*implements Runnable*/{
     }
 
     /**
+     * Debugging method to print board and status of places
+     */
+    public void printBoard(){
+        int i = 0;
+        for(Place place: places()){
+            String hit = "";
+            if(place.isHitShip()){
+                hit = "SHIP";
+            }
+            else{
+                if(place.isHit()) {
+                    hit = "!hit";
+                }
+            }
+            System.out.print("["+place.getX()+","+place.getY()+":"+hit+"]");
+            i++;
+            if(i == size()){
+                i = 0;
+                System.out.println("");
+            }
+        }
+    }
+
+    public boolean defaultShipsDeployed(){
+        for(Battleship ship : getDefaultShips()){
+            if(!ship.isDeployed()){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Places the list of ships in a random orientation and order
      */
     public void placeShips(){
@@ -160,16 +197,16 @@ public class Board /*implements Runnable*/{
     public boolean placeShip(Battleship ship, int x, int y, boolean dir/*true if horizontal*/){
         int len = ship.size();
         if(dir
-            && (0 < x)&&(x + len - 1 <= this.size)
-            && !isPlacementOccuppied(ship, x, y, dir)){
+                && (0 < x)&&(x + len - 1 <= this.size)
+                && !isPlacementOccuppied(ship, x, y, dir)){
             for(int i = x; i < x+len; i++){
                 at(i, y).placeShip(ship);
             }
             return true;
         }
         if(!dir
-              &&(0 < y) && (y+len-1 <= this.size)
-              && !isPlacementOccuppied(ship,x, y, dir)){
+                &&(0 < y) && (y+len-1 <= this.size)
+                && !isPlacementOccuppied(ship,x, y, dir)){
             for(int i = y; i < y+len; i++){
                 at(x, i).placeShip(ship);
             }
@@ -192,14 +229,18 @@ public class Board /*implements Runnable*/{
         if(dir){
             for(int i = x; i < x+len; i++){
                 if(!at(i, y).isEmpty()){
-                    return true;
+                    if(!at(i,y).ship().name().equals(ship.name())) {
+                        return true;
+                    }
                 }
             }
         }
         else{
             for(int i = y; i < y+len; i++){
                 if(!at(x,i).isEmpty()){
-                    return true;
+                    if(!at(x,i).ship().name().equals(ship.name())) {
+                        return true;
+                    }
                 }
             }
         }
@@ -253,9 +294,7 @@ public class Board /*implements Runnable*/{
      */
     public void hit(Place place){
         if(place == null){
-//            System.out.println("Place is null method: hit(Place place) Class: Board");
         }
-        //System.out.println("Hitting place [x: "+place.getX()+"] [y: "+place.getY()+"]");
         if(!place.isHit()){
             place.hit();
             return;
@@ -280,8 +319,15 @@ public class Board /*implements Runnable*/{
         if(!listeners.contains(listener)){
             listeners.add(listener);
         }
+        int i = 0;
+        for(BoardChangeListener listener1 : listeners){
+            i++;
+        }
     }
 
+    public boolean hasBoardChangeListener(){
+        return !listeners.isEmpty();
+    }
     /**
      * Removes specified BoardChangeListener
      */
@@ -293,7 +339,6 @@ public class Board /*implements Runnable*/{
      * Notifies BoardChangeListener that a place has been hit
      */
     private void notifyHit(Place place, int numOfShots){
-        //System.out.println("I have notified the board of hit at: "+place.getX()+", "+place.getY());
         for(BoardChangeListener listener : listeners){
             listener.hit(place, numOfShots);
         }

@@ -35,45 +35,45 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        numShots = (TextView)findViewById(R.id.numShots);
-
-        board = new Board(10);
-        board.placeShips();
-        board.addBoardChangeListener(new BoardChangeListener());
-
-        boardView = (BoardView) findViewById(R.id.boardView);
-        boardView.setBoard(board);
-        boardView.addBoardTouchListener(new BoardTouchListener());
-
-        placeHit = MediaPlayer.create(boardView.getContext(), R.raw.woohoo);
-        shipHit = MediaPlayer.create(boardView.getContext(), R.raw.doh2);
-        shipSunk = MediaPlayer.create(boardView.getContext(), R.raw.aaaahh);
-        gameOver = MediaPlayer.create(boardView.getContext(), R.raw.about_time);
-        v = (Vibrator) boardView.getContext().getSystemService(Context.VIBRATOR_SERVICE);
-
-
-        boardViewThread = new Thread(boardView);
-
-        thread = new Thread(){
-            @Override
-            public void run(){
-                try{
-                    while(!isInterrupted()){
-                        Thread.sleep(100);
-                        runOnUiThread(new Runnable(){
-                            public void run(){
-                                numShots.setText("Number of Shots: "+ board.numOfShots());
-                            }
-                        });
-                    }
-                }catch(Exception e){
-                    e.printStackTrace();
-                }
-            }
-        };
-        thread.start();
-        boardViewThread.start();
+        //setContentView(R.layout.activity_main);
+//        numShots = (TextView)findViewById(R.id.numShots);
+//
+//        board = new Board(10);
+//        board.placeShips();
+//        board.addBoardChangeListener(new BoardChangeListener());
+//
+//        boardView = (BoardView) findViewById(R.id.boardView);
+//        boardView.setBoard(board);
+//        boardView.addBoardTouchListener(new BoardTouchListener());
+//
+//        placeHit = MediaPlayer.create(boardView.getContext(), R.raw.woohoo);
+//        shipHit = MediaPlayer.create(boardView.getContext(), R.raw.doh2);
+//        shipSunk = MediaPlayer.create(boardView.getContext(), R.raw.aaaahh);
+//        gameOver = MediaPlayer.create(boardView.getContext(), R.raw.about_time);
+//        v = (Vibrator) boardView.getContext().getSystemService(Context.VIBRATOR_SERVICE);
+//
+//
+//        boardViewThread = new Thread(boardView);
+//
+//        thread = new Thread(){
+//            @Override
+//            public void run(){
+//                try{
+//                    while(!isInterrupted()){
+//                        Thread.sleep(100);
+//                        runOnUiThread(new Runnable(){
+//                            public void run(){
+//                                numShots.setText("Number of Shots: "+ board.numOfShots());
+//                            }
+//                        });
+//                    }
+//                }catch(Exception e){
+//                    e.printStackTrace();
+//                }
+//            }
+//        };
+//        thread.start();
+//        boardViewThread.start();
     }
 
     /**
