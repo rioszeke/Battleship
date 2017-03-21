@@ -47,14 +47,12 @@ public class gameActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         opponentContent = MediaPlayer.create(findViewById(R.id.fragment_frame).getContext(), R.raw.woohoo);
         opponentSad = MediaPlayer.create(findViewById(R.id.fragment_frame).getContext(), R.raw.doh2);
         opponentAngry = MediaPlayer.create(findViewById(R.id.fragment_frame).getContext(), R.raw.aaaahh);
         gameOver = MediaPlayer.create(findViewById(R.id.fragment_frame).getContext(), R.raw.about_time);
         v = (Vibrator) findViewById(R.id.fragment_frame).getContext().getSystemService(Context.VIBRATOR_SERVICE);
         sound = true;
-
         FragmentManager fm = getFragmentManager();
         mRetainedFragment = (RetainedFragment) fm.findFragmentByTag("RetainedFragment");
 
@@ -70,19 +68,21 @@ public class gameActivity extends AppCompatActivity {
             difficultyFrag.addButtonListener(new ButtonSelectListener());
             mRetainedFragment.setPlayerTurn(playerTurn);
             mRetainedFragment.setPlayerBoard(playerBoard);
+            mRetainedFragment.setSound(sound);
             getFragmentManager().beginTransaction()
                     .replace(R.id.fragment_frame, difficultyFrag, difficultyFrag.getClass().getSimpleName()).commit();
 
 
         }
         else{
+            this.invalidateOptionsMenu();
             playerBoard = mRetainedFragment.getPlayerBoard();
             opponentBoard = mRetainedFragment.getOpponentBoard();
             player = mRetainedFragment.getPlayer();
             opponent = mRetainedFragment.getOpponent();
             playerTurn = mRetainedFragment.getPlayerTurn();
             strategy = mRetainedFragment.getStrategy();
-
+            sound = mRetainedFragment.getSound();
             if(!playerBoard.hasBoardChangeListener()) {
                 playerBoard.addBoardChangeListener(new BoardChangeListener());
             }
@@ -284,6 +284,13 @@ public class gameActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
         getMenuInflater().inflate(R.menu.main, menu);
+
+        if(sound){
+            menu.getItem(0).setTitle("Sound on");
+        }
+        else{
+            menu.getItem(0).setTitle("Sound on");
+        }
         return true;
     }
 
@@ -294,10 +301,13 @@ public class gameActivity extends AppCompatActivity {
                 if (item.getTitle().equals("Sound off")) {
                     sound = true;
                     item.setTitle("Sound on");
+                    mRetainedFragment.setSound(sound);
 
                 } else {
                     sound = false;
                     item.setTitle("Sound off");
+                    mRetainedFragment.setSound(sound);
+
                 }
                 return true;
             default:
@@ -427,29 +437,29 @@ public class gameActivity extends AppCompatActivity {
         }
     }
 
-    protected class PlacedListener implements PlacedShipsView.PlacedListener{
+    protected class PlacedListener implements PlacedShipsView.PlacedListener {
 
         @Override
-        public void onTouch(int x, int y){
+        public void onTouch(int x, int y) {
             //going to reorient or replace
-            if(shipSelected == null) {
+            if (shipSelected == null) {
                 if (playerBoard.at(x + 1, y + 1).hasShip()) {
                     //if head of ship is touched reorient
-                    if(playerBoard.at(x + 1, y + 1).ship().head().getX() == x + 1
+                    if (playerBoard.at(x + 1, y + 1).ship().head().getX() == x + 1
                             && playerBoard.at(x + 1, y + 1).ship().head().getY() == y + 1) {
                         reorientShip(playerBoard.at(x + 1, y + 1).ship());
-                    }else {
-                        shipSelected = playerBoard.at(x+1, y+1).ship();
+                    } else {
+                        shipSelected = playerBoard.at(x + 1, y + 1).ship();
                     }
                 }//else do nothing
 
-            }else{//going to place ship that has been selected
+            } else {//going to place ship that has been selected
                 //if ship is already on the board replace
-                if(shipSelected.isDeployed()) {
+                if (shipSelected.isDeployed()) {
                     replaceShip(shipSelected, x, y);
-                }else{
+                } else {
                     //place ship that has been selected
-                    if(playerBoard.placeShip(shipSelected, x+1, y+1, true)){
+                    if (playerBoard.placeShip(shipSelected, x + 1, y + 1, true)) {
                         refreshView();
                         shipSelected = null;
                     }
@@ -457,7 +467,7 @@ public class gameActivity extends AppCompatActivity {
             }
         }
 
-        private boolean reorientShip(Battleship ship){
+        private boolean reorientShip(Battleship ship) {
             Place head = ship.head();
             boolean wasHorizontal = ship.isHorizontal();
             ship.removePlaces();
@@ -471,32 +481,24 @@ public class gameActivity extends AppCompatActivity {
             }
         }
 
-        private boolean replaceShip(Battleship ship, int x, int y){
+        private boolean replaceShip(Battleship ship, int x, int y) {
             Place head = ship.head();
             boolean wasHorizontal = ship.isHorizontal();
             ship.removePlaces();
-            if(playerBoard.placeShip(ship, x+1, y+1, wasHorizontal)){
+            if (playerBoard.placeShip(ship, x + 1, y + 1, wasHorizontal)) {
                 refreshView();
                 shipSelected = null;
                 return true;
-            }
-            else{
+            } else {
                 playerBoard.placeShip(ship, head.getX(), head.getY(), wasHorizontal);
                 return false;
             }
 
         }
-        protected void refreshView(){
+
+        protected void refreshView() {
             placedShipsView.invalidate();
             shipsView.invalidate();
         }
-<<<<<<< HEAD
-
-
-
     }
 }
-=======
-    }
-}
->>>>>>> 69ced65f35596d9605dc33dbc892e3ef98e7741a

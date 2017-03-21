@@ -17,6 +17,15 @@ public class RetainedFragment extends Fragment {
     private Strategy strategy;
     private BoardView playerBoardView;
     private BoardView opponentBoardView;
+    private Boolean sound;
+
+    public Boolean getSound() {
+        return sound;
+    }
+
+    public void setSound(Boolean sound) {
+        this.sound = sound;
+    }
 
     public BoardView getPlayerBoardView() {
         return playerBoardView;
