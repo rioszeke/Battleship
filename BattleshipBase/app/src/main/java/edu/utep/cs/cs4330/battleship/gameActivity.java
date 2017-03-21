@@ -490,8 +490,13 @@ public class gameActivity extends AppCompatActivity {
             placedShipsView.invalidate();
             shipsView.invalidate();
         }
+<<<<<<< HEAD
 
 
 
     }
 }
+=======
+    }
+}
+>>>>>>> 69ced65f35596d9605dc33dbc892e3ef98e7741a
