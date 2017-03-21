@@ -175,7 +175,11 @@ public class BoardView extends View implements Runnable{
         if(board != null) {
             drawPlaces(canvas);
         }
+        if(!board.isGameOver()) {
+            invalidate();
+        }
     }
+
 
     /**
      * Draw all the places of the board.

@@ -22,7 +22,6 @@ class Place {
         this.y = y;
         this.board = board;
     }
-
     public int getX(){
         return x;
     }

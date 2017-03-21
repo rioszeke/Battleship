@@ -7,6 +7,8 @@ import android.media.MediaPlayer;
 import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -21,7 +23,6 @@ public class gameActivity extends AppCompatActivity {
     private PlacedShipsView placedShipsView;
     private Thread playerViewThread;
     private Thread opponentViewThread;
-    private Thread boardThread;
     private Thread thread;
     private TextView numShots;
     private MyDialogFragment promptFragment;
@@ -31,7 +32,7 @@ public class gameActivity extends AppCompatActivity {
     protected MediaPlayer opponentAngry;
     protected MediaPlayer gameOver;
     protected Vibrator v;
-
+    protected boolean sound;
     private Player player;
     private Player opponent;
     private Boolean playerTurn;
@@ -41,7 +42,7 @@ public class gameActivity extends AppCompatActivity {
 
     private difficultyFragment difficultyFrag;
     private playFragment playFrag;
-
+    private RetainedFragment mRetainedFragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,20 +53,58 @@ public class gameActivity extends AppCompatActivity {
         opponentAngry = MediaPlayer.create(findViewById(R.id.fragment_frame).getContext(), R.raw.aaaahh);
         gameOver = MediaPlayer.create(findViewById(R.id.fragment_frame).getContext(), R.raw.about_time);
         v = (Vibrator) findViewById(R.id.fragment_frame).getContext().getSystemService(Context.VIBRATOR_SERVICE);
+        sound = true;
 
-        playerTurn = true;
-        playerBoard = new Board(10);
+        FragmentManager fm = getFragmentManager();
+        mRetainedFragment = (RetainedFragment) fm.findFragmentByTag("RetainedFragment");
 
-        difficultyFrag = new difficultyFragment();
-        difficultyFrag.addButtonListener(new ButtonSelectListener());
+        // create the fragment and data the first time
+        if (mRetainedFragment == null) {
+            playerTurn = true;
+            playerBoard = new Board(10);
+            // add the fragment
+            mRetainedFragment = new RetainedFragment();
+            fm.beginTransaction().add(mRetainedFragment, "RetainedFragment").commit();
+            // load data from a data source or perform any calculation
+            difficultyFrag = new difficultyFragment();
+            difficultyFrag.addButtonListener(new ButtonSelectListener());
+            mRetainedFragment.setPlayerTurn(playerTurn);
+            mRetainedFragment.setPlayerBoard(playerBoard);
+            getFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_frame, difficultyFrag, difficultyFrag.getClass().getSimpleName()).commit();
 
-        getFragmentManager().beginTransaction()
-                .replace(R.id.fragment_frame, difficultyFrag, difficultyFrag.getClass().getSimpleName()).commit();
+
+        }
+        else{
+            playerBoard = mRetainedFragment.getPlayerBoard();
+            opponentBoard = mRetainedFragment.getOpponentBoard();
+            player = mRetainedFragment.getPlayer();
+            opponent = mRetainedFragment.getOpponent();
+            playerTurn = mRetainedFragment.getPlayerTurn();
+            strategy = mRetainedFragment.getStrategy();
+
+            if(!playerBoard.hasBoardChangeListener()) {
+                playerBoard.addBoardChangeListener(new BoardChangeListener());
+            }
+            if(!opponentBoard.hasBoardChangeListener()) {
+                opponentBoard.addBoardChangeListener(new BoardChangeListener());
+            }
+            playerBoardView = mRetainedFragment.getPlayerBoardView();
+            playerBoardView.setBoard(opponentBoard, true);
+            opponentBoardView = mRetainedFragment.getOpponentBoardView();
+            opponentBoardView.setBoard(playerBoard, true);
+            gameStarted = true;
+            startThreads();
+            playFrag = new playFragment();
+            moveToFragment(playFrag);
+        }
 
     }
+
     private void startGame() {
         opponentBoard = new Board(10);
         opponentBoard.placeShips();
+        mRetainedFragment.setOpponentBoard(opponentBoard);
         if(!playerBoard.hasBoardChangeListener()) {
             playerBoard.addBoardChangeListener(new BoardChangeListener());
         }
@@ -100,6 +139,11 @@ public class gameActivity extends AppCompatActivity {
                                     }
                                     if(!playerTurn){
                                         System.out.println("opponents turn");
+                                        try{
+                                            thread.sleep(800);
+                                        }catch(Exception e){
+                                            System.out.println(e);
+                                        }
                                         if (!opponentBoardView.hasBoardTouchListener()) {
                                             opponentBoardView.addBoardTouchListener(new gameActivity.BoardTouchListener());
                                         }
@@ -116,8 +160,8 @@ public class gameActivity extends AppCompatActivity {
             }
         };
         thread.start();
-        playerViewThread.start();
-        opponentViewThread.start();
+//        playerViewThread.start();
+//        opponentViewThread.start();
     }
 
     /**
@@ -132,8 +176,8 @@ public class gameActivity extends AppCompatActivity {
             promptFragment.show(fm, "sample fragment");
         }
         else{
-            restartGame(playerBoard, opponentBoardView);
-            restartGame(opponentBoard, playerBoardView);
+            resetGame(playerBoard, opponentBoardView);
+            resetGame(opponentBoard, playerBoardView);
             gameStarted = false;
             moveToFragment(difficultyFrag);
         }
@@ -145,6 +189,7 @@ public class gameActivity extends AppCompatActivity {
             FragmentManager fm = getFragmentManager();
             promptFragment = new MyDialogFragment();
             promptFragment.show(fm, "sample fragment");
+
         }
     }
 
@@ -153,11 +198,15 @@ public class gameActivity extends AppCompatActivity {
      * @param view
      */
     public void yesClicked(View view){
-        restartGame(playerBoard, opponentBoardView);
-        restartGame(opponentBoard, playerBoardView);
+        resetGame(playerBoard, opponentBoardView);
+        resetGame(opponentBoard, playerBoardView);
         gameStarted = false;
+        difficultyFrag = new difficultyFragment();
+        difficultyFrag.addButtonListener(new ButtonSelectListener());
         moveToFragment(difficultyFrag);
         promptFragment.dismiss();
+
+
     }
 
     /**
@@ -176,7 +225,7 @@ public class gameActivity extends AppCompatActivity {
      * @param board
      * @param boardView
      */
-    private void restartGame(Board board, BoardView boardView){
+    private void resetGame(Board board, BoardView boardView){
         board.reset();
         boardView.removeAllBoardTouchListeners();
         boardView.invalidate();
@@ -204,20 +253,26 @@ public class gameActivity extends AppCompatActivity {
     public BoardView getPlayerBoardView(){
         playerBoardView = (BoardView) findViewById(R.id.playerBoardView);
         playerBoardView.setBoard(opponentBoard, false);
-        player = new humanPlayer(opponentBoard, playerTurn, playerBoardView);
+        mRetainedFragment.setPlayerBoardView(playerBoardView);
+//        if(player == null) {
+            player = new humanPlayer(opponentBoard, playerTurn, playerBoardView);
+            mRetainedFragment.setPlayer(player);
+//        }
         return playerBoardView;
     }
 
     public BoardView getOpponentBoardView(){
         opponentBoardView = (BoardView) findViewById(R.id.opponentBoardView);
         opponentBoardView.setBoard(playerBoard, true);
-        if(strategy != null) {
-            opponent = new ComputerPlayer(playerBoard, !playerTurn, opponentBoardView, strategy);
-        }
-        else{
-            opponent = new humanPlayer(playerBoard, !playerTurn, opponentBoardView);
-        }
-
+        mRetainedFragment.setOpponentBoardView(opponentBoardView);
+//        if(opponent == null) {
+            if (strategy != null) {
+                opponent = new ComputerPlayer(playerBoard, !playerTurn, opponentBoardView, strategy);
+            } else {
+                opponent = new humanPlayer(playerBoard, !playerTurn, opponentBoardView);
+            }
+            mRetainedFragment.setOpponent(opponent);
+//        }
         return opponentBoardView;
     }
 
@@ -225,6 +280,29 @@ public class gameActivity extends AppCompatActivity {
         numShots = (TextView) findViewById(R.id.numShots);
 
         return numShots;
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.sound:
+                if (item.getTitle().equals("Sound off")) {
+                    sound = true;
+                    item.setTitle("Sound on");
+
+                } else {
+                    sound = false;
+                    item.setTitle("Sound off");
+                }
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
 
@@ -235,7 +313,7 @@ public class gameActivity extends AppCompatActivity {
 
              /* modify when another strategy has been created */
             if(button.equals("Difficult")){
-                strategy = new RandomStrategy(playerBoard);
+                strategy = new SmartStrategy(playerBoard);
             }
             if(button.equals("Easy")){
                 strategy = new RandomStrategy(playerBoard);
@@ -244,6 +322,7 @@ public class gameActivity extends AppCompatActivity {
             if(button.equals("Done")&& playerBoard.defaultShipsDeployed() && strategy != null){
                 startGame();
             }
+            mRetainedFragment.setStrategy(strategy);
         }
     }
 
@@ -258,6 +337,7 @@ public class gameActivity extends AppCompatActivity {
                 if (!player.getBoard().at(x + 1, y + 1).isHit()) {
                     if(!player.hit(x + 1, y + 1)){
                         playerTurn = !playerTurn;
+                        mRetainedFragment.setPlayerTurn(playerTurn);
                     }
                     player.hit(x+1, y+1);
                 }
@@ -265,6 +345,7 @@ public class gameActivity extends AppCompatActivity {
                 if (!opponent.getBoard().at(x + 1, y + 1).isHit()) {
                     if(!opponent.hit(x + 1, y + 1)){
                         playerTurn = !playerTurn;
+                        mRetainedFragment.setPlayerTurn(playerTurn);
                     }
                     opponent.hit(x+1, y+1);
                 }
@@ -286,19 +367,19 @@ public class gameActivity extends AppCompatActivity {
         public void hit(Place place, int numOfShots){
             if(place.hasShip()){
                 if(!place.ship().isSunk()) {
-                    if(playerTurn){
+                    if(playerTurn && sound){
                         opponentSad.start();
                     }
-                    else{
+                    else if(sound){
                         opponentContent.start();
                     }
                     v.vibrate(100);
                 }
             }
             else{
-                if(playerTurn){
+                if(playerTurn && sound){
                     opponentContent.start();
-                }else{
+                }else if (sound){
                     opponentSad.start();
                 }
             }
@@ -312,7 +393,9 @@ public class gameActivity extends AppCompatActivity {
          */
         public void gameOver(int numOfShots){
             playerBoardView.removeAllBoardTouchListeners();
-            gameOver.start();
+            if(sound) {
+                gameOver.start();
+            }
             v.vibrate(1000);
         }
 
@@ -321,10 +404,10 @@ public class gameActivity extends AppCompatActivity {
          * @param ship
          */
         public void shipSunk(Battleship ship){
-            if(playerTurn) {
+            if(playerTurn && sound) {
                 opponentAngry.start();
             }
-            else{
+            else if (sound){
                 opponentContent.start();
             }
             v.vibrate(500);
@@ -407,9 +490,8 @@ public class gameActivity extends AppCompatActivity {
             placedShipsView.invalidate();
             shipsView.invalidate();
         }
+
+
+
     }
-
-
-
-
 }
