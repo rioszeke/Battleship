@@ -98,7 +98,6 @@ public class gameActivity extends AppCompatActivity {
             playFrag = new playFragment();
             moveToFragment(playFrag);
         }
-
     }
 
     private void startGame() {
