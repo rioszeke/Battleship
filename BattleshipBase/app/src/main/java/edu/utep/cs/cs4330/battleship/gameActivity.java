@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class gameActivity extends AppCompatActivity {
 
@@ -199,6 +200,7 @@ public class gameActivity extends AppCompatActivity {
         }
     }
 
+
     /**
      * If yes button is clicked game is restarted
      * @param view
@@ -323,6 +325,10 @@ public class gameActivity extends AppCompatActivity {
         }
     }
 
+    protected void toast(String msg) {
+        Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+    }
+
 
     private class ButtonSelectListener implements difficultyFragment.ButtonSelectListener{
 
@@ -332,12 +338,15 @@ public class gameActivity extends AppCompatActivity {
              /* modify when another strategy has been created */
             if(button.equals("Difficult")){
                 strategy = new SmartStrategy(playerBoard);
+                toast("Difficult strategy selected!");
             }
             if(button.equals("Easy")){
+                toast("Easy strategy selected!");
                 strategy = new RandomStrategy(playerBoard);
             }
 
             if(button.equals("Done")&& playerBoard.defaultShipsDeployed() && strategy != null){
+                toast("Game started!");
                 startGame();
             }
             mRetainedFragment.setStrategy(strategy);
@@ -411,6 +420,11 @@ public class gameActivity extends AppCompatActivity {
          */
         public void gameOver(int numOfShots){
             playerBoardView.removeAllBoardTouchListeners();
+            if(playerBoard.isGameOver()){
+                toast("Opponent won!");
+            }else{
+                toast("Player won!");
+            }
             if(sound) {
                 gameOver.start();
             }
