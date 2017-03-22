@@ -58,7 +58,8 @@ public class gameActivity extends AppCompatActivity {
         sound = true;
         FragmentManager fm = getFragmentManager();
         mRetainedFragment = (RetainedFragment) fm.findFragmentByTag("RetainedFragment");
-
+        this.setRequestedOrientation(
+                ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         // create the fragment and data the first time
         if (mRetainedFragment == null) {
             playerTurn = true;
@@ -184,9 +185,10 @@ public class gameActivity extends AppCompatActivity {
             resetGame(playerBoard, opponentBoardView);
             resetGame(opponentBoard, playerBoardView);
             gameStarted = false;
-            moveToFragment(difficultyFrag);
             this.setRequestedOrientation(
                     ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            moveToFragment(difficultyFrag);
+
         }
     }
 
@@ -211,9 +213,9 @@ public class gameActivity extends AppCompatActivity {
         gameStarted = false;
         difficultyFrag = new difficultyFragment();
         difficultyFrag.addButtonListener(new ButtonSelectListener());
-        moveToFragment(difficultyFrag);
         this.setRequestedOrientation(
                 ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        moveToFragment(difficultyFrag);
         promptFragment.dismiss();
 
 
