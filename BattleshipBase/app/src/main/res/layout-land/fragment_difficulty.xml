@@ -17,13 +17,19 @@
 
         <edu.utep.cs.cs4330.battleship.SelectShipsView
             android:id="@+id/shipsToPlace"
-            android:layout_width="match_parent"
+            android:layout_width="117dp"
             android:layout_height="130dp"
             android:layout_marginTop="10dp"
-            android:layout_weight="2" />
-
+            android:layout_weight="0.08" />
+        <edu.utep.cs.cs4330.battleship.PlacedShipsView
+            android:id="@+id/placedShipsView"
+            android:layout_width="276dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/topLayout"
+            android:layout_marginTop="10dp"
+            android:layout_weight="0.14" />
         <LinearLayout
-            android:layout_weight=".5"
+            android:layout_weight="0.1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
@@ -72,13 +78,7 @@
         </LinearLayout>
     </LinearLayout>
 
-    <edu.utep.cs.cs4330.battleship.PlacedShipsView
-        android:id="@+id/placedShipsView"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_below="@id/topLayout"
-        android:layout_gravity="center"
-        android:layout_marginTop="10dp" />
+
 
 
 </RelativeLayout>

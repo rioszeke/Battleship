@@ -3,6 +3,7 @@ package edu.utep.cs.cs4330.battleship;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.media.MediaPlayer;
 import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
@@ -45,6 +46,7 @@ public class gameActivity extends AppCompatActivity {
     private RetainedFragment mRetainedFragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         opponentContent = MediaPlayer.create(findViewById(R.id.fragment_frame).getContext(), R.raw.woohoo);
@@ -75,7 +77,6 @@ public class gameActivity extends AppCompatActivity {
 
         }
         else{
-            this.invalidateOptionsMenu();
             playerBoard = mRetainedFragment.getPlayerBoard();
             opponentBoard = mRetainedFragment.getOpponentBoard();
             player = mRetainedFragment.getPlayer();
@@ -96,6 +97,8 @@ public class gameActivity extends AppCompatActivity {
             gameStarted = true;
             startThreads();
             playFrag = new playFragment();
+            this.setRequestedOrientation(
+                    ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
             moveToFragment(playFrag);
         }
     }
@@ -113,6 +116,8 @@ public class gameActivity extends AppCompatActivity {
         startThreads();
         gameStarted = true;
         playFrag = new playFragment();
+        this.setRequestedOrientation(
+                ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
         moveToFragment(playFrag);
     }
 
@@ -179,6 +184,8 @@ public class gameActivity extends AppCompatActivity {
             resetGame(opponentBoard, playerBoardView);
             gameStarted = false;
             moveToFragment(difficultyFrag);
+            this.setRequestedOrientation(
+                    ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
     }
 
@@ -203,6 +210,8 @@ public class gameActivity extends AppCompatActivity {
         difficultyFrag = new difficultyFragment();
         difficultyFrag.addButtonListener(new ButtonSelectListener());
         moveToFragment(difficultyFrag);
+        this.setRequestedOrientation(
+                ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         promptFragment.dismiss();
 
 
@@ -227,7 +236,7 @@ public class gameActivity extends AppCompatActivity {
     private void resetGame(Board board, BoardView boardView){
         board.reset();
         boardView.removeAllBoardTouchListeners();
-        boardView.invalidate();
+//        boardView.invalidate();
     }
 
     private void moveToFragment(Fragment fragment){
