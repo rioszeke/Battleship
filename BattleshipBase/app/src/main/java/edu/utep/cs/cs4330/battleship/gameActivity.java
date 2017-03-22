@@ -34,7 +34,7 @@ public class gameActivity extends AppCompatActivity {
     protected MediaPlayer opponentAngry;
     protected MediaPlayer gameOver;
     protected Vibrator v;
-    protected boolean sound;
+    static private boolean sound;
     private Player player;
     private Player opponent;
     private Boolean playerTurn;
@@ -222,8 +222,7 @@ public class gameActivity extends AppCompatActivity {
     }
 
     /**
-     * If no button is clicked, game resumes
-     * fragment is dismissed from view
+     * If no button is clickin from view
      * @param view
      */
     public void noClicked(View view){
@@ -301,7 +300,7 @@ public class gameActivity extends AppCompatActivity {
             menu.getItem(0).setTitle("Sound on");
         }
         else{
-            menu.getItem(0).setTitle("Sound on");
+            menu.getItem(0).setTitle("Sound off");
         }
         return true;
     }
@@ -323,7 +322,7 @@ public class gameActivity extends AppCompatActivity {
                 }
                 return true;
             default:
-                return super.onOptionsItemSelected(item);
+                return true;
         }
     }
 
