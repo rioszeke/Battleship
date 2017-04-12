@@ -4,6 +4,9 @@
 
     <uses-permission android:name="android.permission.VIBRATE" />
 
+    <!-- To access Google+ APIs: -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -20,7 +23,8 @@
             </intent-filter>
         </activity>
 
-        <!--<activity android:name=".gameActivity"></activity>-->
+        <!-- <activity android:name=".gameActivity"></activity> -->
+        <activity android:name=".gameActivityBT"></activity>
     </application>
 
 </manifest>

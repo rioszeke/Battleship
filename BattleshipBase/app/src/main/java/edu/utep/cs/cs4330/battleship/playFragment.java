@@ -39,10 +39,10 @@ public class playFragment extends Fragment {
     @Override
     public void onResume(){
         super.onResume();
-            playerBoardView = ((gameActivity) this.getActivity()).getPlayerBoardView();
-            opponentBoardView = ((gameActivity) this.getActivity()).getOpponentBoardView();
+        ((gameActivity)this.getActivity()).setPlayerBoardView();
+        ((gameActivity)this.getActivity()).setOpponentBoardView();
+        ((gameActivity)this.getActivity()).setShotsView();
 
-            numShots = ((gameActivity) this.getActivity()).getShotsView();
 
     }
 

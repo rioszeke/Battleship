@@ -24,12 +24,12 @@ public class difficultyFragment extends Fragment implements View.OnClickListener
     private Button fragment_difficult_btn;
     private Button fragment_easy_btn;
     private Button fragment_done_btn;
-    private SelectShipsView shipsView;
-    private PlacedShipsView placedShipsView;
+//    private SelectShipsView shipsView;
+//    private PlacedShipsView placedShipsView;
+//
+//    private OnFragmentInteractionListener mListener;
 
-    private OnFragmentInteractionListener mListener;
-
-    private final List<ButtonSelectListener> listeners = new ArrayList<>();
+    private final List<DifficultySelectListener> listeners = new ArrayList<>();
 
     public difficultyFragment() {
         // Required empty public constructor
@@ -51,8 +51,10 @@ public class difficultyFragment extends Fragment implements View.OnClickListener
     @Override
     public void onResume(){
         super.onResume();
-        shipsView = ((gameActivity) this.getActivity()).getSelectShipsView();
-        placedShipsView = ((gameActivity) this.getActivity()).getPlacedShipsView();
+//        shipsView = ((gameActivity) this.getActivity()).getSelectShipsView();
+//        placedShipsView = ((gameActivity) this.getActivity()).getPlacedShipsView();
+        ((gameActivity) this.getActivity()).setSelectShipsView();
+        ((gameActivity) this.getActivity()).setPlacedShipsView();
     }
 
     public void onClick(View v){
@@ -73,21 +75,21 @@ public class difficultyFragment extends Fragment implements View.OnClickListener
         }
     }
 
-    public interface ButtonSelectListener{
+    public interface DifficultySelectListener{
 
-        public void ButtonSelected(String string);
+        public void DifficultySelected(String string);
     }
 
     /** Register the given listener. */
-    public void addButtonListener(ButtonSelectListener listener) {
+    public void addButtonListener(DifficultySelectListener listener) {
         if (!listeners.contains(listener)) {
             listeners.add(listener);
         }
     }
 
     public void notifyButtonClick(String string){
-        for (ButtonSelectListener listener: listeners) {
-            listener.ButtonSelected(string);
+        for (DifficultySelectListener listener: listeners) {
+            listener.DifficultySelected(string);
         }
     }
     /**
