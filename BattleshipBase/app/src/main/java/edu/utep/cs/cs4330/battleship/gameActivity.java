@@ -44,7 +44,7 @@ public class gameActivity extends AppCompatActivity {
     private Battleship shipSelected;
 
     private difficultyFragment difficultyFrag;
-    private gameModeFragment gameModeFrag;
+//    private gameModeFragment gameModeFrag;
     private playFragment playFrag;
     private RetainedFragment mRetainedFragment;
 
@@ -53,7 +53,7 @@ public class gameActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_game);
 
         opponentContent = MediaPlayer.create(findViewById(R.id.fragment_frame).getContext(), R.raw.woohoo);
         opponentSad = MediaPlayer.create(findViewById(R.id.fragment_frame).getContext(), R.raw.doh2);
@@ -79,9 +79,11 @@ public class gameActivity extends AppCompatActivity {
             mRetainedFragment.setSound(sound);
 //            getFragmentManager().beginTransaction()
 //                    .replace(R.id.fragment_frame, difficultyFrag, difficultyFrag.getClass().getSimpleName()).commit();
-            gameModeFrag = new gameModeFragment();
-            gameModeFrag.addButtonListener(new ModeSelectListener());
-            moveToFragment(gameModeFrag, false);
+//            gameModeFrag = new gameModeFragment();
+//            gameModeFrag.addButtonListener(new ModeSelectListener());
+            difficultyFrag = new difficultyFragment();
+            difficultyFrag.addButtonListener(new DifficultySelectListener());
+            moveToFragment(difficultyFrag, false);
 
         }
         else{
@@ -206,8 +208,6 @@ public class gameActivity extends AppCompatActivity {
             promptFragment = new MyDialogFragment();
             promptFragment.show(fm, "sample fragment");
 
-        }else{
-            moveToFragment(gameModeFrag, false);
         }
     }
 
@@ -338,23 +338,23 @@ public class gameActivity extends AppCompatActivity {
         Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
     }
 
-    protected class ModeSelectListener implements gameModeFragment.ModeSelectListener{
-
-        @Override
-        public void ModeSelected(String mode){
-            if(mode.equals("p2p")){
-                Log.d("Mode Selected", "player vs player selected");
-                p2p = true;
-            }
-            if(mode.equals("strategy")){
-                Log.d("Mode selected", "strategy selected");
-                difficultyFrag = new difficultyFragment();
-                difficultyFrag.addButtonListener(new DifficultySelectListener());
-                p2p = false;
-                moveToFragment(difficultyFrag, true);
-            }
-        }
-    }
+//    protected class ModeSelectListener implements gameModeFragment.ModeSelectListener{
+//
+//        @Override
+//        public void ModeSelected(String mode){
+//            if(mode.equals("p2p")){
+//                Log.d("Mode Selected", "player vs player selected");
+//                p2p = true;
+//            }
+//            if(mode.equals("strategy")){
+//                Log.d("Mode selected", "strategy selected");
+//                difficultyFrag = new difficultyFragment();
+//                difficultyFrag.addButtonListener(new DifficultySelectListener());
+//                p2p = false;
+//                moveToFragment(difficultyFrag, true);
+//            }
+//        }
+//    }
 
 
     protected class DifficultySelectListener implements difficultyFragment.DifficultySelectListener{

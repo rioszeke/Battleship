@@ -51,8 +51,6 @@ public class difficultyFragment extends Fragment implements View.OnClickListener
     @Override
     public void onResume(){
         super.onResume();
-//        shipsView = ((gameActivity) this.getActivity()).getSelectShipsView();
-//        placedShipsView = ((gameActivity) this.getActivity()).getPlacedShipsView();
         ((gameActivity) this.getActivity()).setSelectShipsView();
         ((gameActivity) this.getActivity()).setPlacedShipsView();
     }
