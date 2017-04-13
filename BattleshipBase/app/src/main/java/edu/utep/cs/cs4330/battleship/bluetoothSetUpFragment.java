@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -27,7 +28,7 @@ public class bluetoothSetUpFragment extends Fragment implements AdapterView.OnIt
 
     private ArrayAdapter<String> pairList;
 
-    private List<listItemSelectListener> listeners;
+    private List<listItemSelectListener> listeners = new ArrayList<>();
 
     public bluetoothSetUpFragment() {
         // Required empty public constructor

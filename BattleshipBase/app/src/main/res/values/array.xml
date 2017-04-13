@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="pairs">
+        <item>Zekes phone</item>
+        <item>Davids phone</item>
+        <item>DrYoonsiks phone</item>
+        <item>DrGates phone</item>
+        <item>snoopies phone</item>
+        <item>ScoobyDoos phone</item>
+        <item>shreks phone</item>
+    </string-array>
+</resources>

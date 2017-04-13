@@ -53,6 +53,7 @@ public class gameActivityBT extends AppCompatActivity {
     private bluetoothSetUpFragment btSetFrag;
     private placeShipsBTFragment placeShipsFrag;
     private waitingFragment waitingFrag;
+    private playFragment playFrag
     private RetainedFragment mRetainedFragment;
 
     private BluetoothAdapter bt;
@@ -85,10 +86,11 @@ public class gameActivityBT extends AppCompatActivity {
             mRetainedFragment.setPlayerTurn(playerTurn);
             mRetainedFragment.setPlayerBoard(playerBoard);
             mRetainedFragment.setSound(sound);
-//            btSetFrag = new bluetoothSetUpFragment();
+            btSetFrag = new bluetoothSetUpFragment();
+            btSetFrag.addListItemSelectListener(new listItemSelectListener());
 //            placeShipsFrag = new placeShipsBTFragment();
-            waitingFrag = new waitingFragment();
-            moveToFragment(waitingFrag, false);
+//            waitingFrag = new waitingFragment();
+            moveToFragment(btSetFrag, false);
 
         }
 //        else{
@@ -172,9 +174,11 @@ public class gameActivityBT extends AppCompatActivity {
                     try{
                         if(!gameStarted && !opponentReady){
                             while(!opponentReady){
+
                             }
                             /** Send player's ship information here David **/
-                            findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+                            playFrag = new playFragment();
+                            moveToFragment(playFrag, true);
                         }
 //                        while(!isInterrupted()){
 //                            Thread.sleep(100);

@@ -6,61 +6,50 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin">
-
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/btTopLayout"
+    <LinearLayout
+        android:layout_weight=".5"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
-        <edu.utep.cs.cs4330.battleship.SelectShipsView
-            android:id="@+id/btShipsToPlace"
-            android:layout_width="match_parent"
-            android:layout_weight="2"
-            android:layout_height="130dp"
-            android:layout_marginTop="10dp" />
-        <LinearLayout
-            android:layout_weight=".5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/btTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginEnd="14dp"
-                android:layout_marginRight="14dp"
-                android:text="Press done when\nready to play" />
-
-            <Button
-                android:id="@+id/btFragment_done_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignEnd="@+id/btTextView"
-                android:layout_alignRight="@+id/btTextView"
-                android:layout_alignTop="@+id/btTextView"
-                android:text="Done"/>
-        </LinearLayout>
-    </LinearLayout>
-
-    <edu.utep.cs.cs4330.battleship.PlacedShipsView
-        android:layout_below="@id/btTopLayout"
-        android:id="@+id/placedShipsView"
-        android:layout_width="wrap_content"
         android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/btTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginEnd="14dp"
+        android:layout_marginRight="14dp"
+        android:text="Press pair to connect" />
+
+    <Button
+        android:id="@+id/enable_BT_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/btTextView"
+        android:layout_alignTop="@+id/btTextView"
+        android:onClick="enableClicked"
+        android:text="Enable BT"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/settings_btn"
+        android:layout_alignLeft="@+id/pair_btn"
+        android:layout_alignTop="@+id/pair_btn"
+        android:onClick="settingsClicked"
+        android:text="Settings"
+        />
+
+    <ListView
+        android:id="@+id/pair_List_View"
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="0.97"
         android:layout_marginTop="10dp"
-        android:layout_gravity="center"/>
-
-
+        />
+        <!--android:entries="@array/pairs"-->
+    </LinearLayout>
 
 </RelativeLayout>

@@ -11,17 +11,17 @@
     tools:context="edu.utep.cs.cs4330.battleship.gameModeFragment">
 
 
-    <Button
-        android:id="@+id/p2pBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="P2P (Bluetooth)" />
+    <!--<Button-->
+        <!--android:id="@+id/p2pBtn"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="center"-->
+        <!--android:text="P2P (Bluetooth)" />-->
 
-    <Button
-        android:id="@+id/stratBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="Strategy" />
+    <!--<Button-->
+        <!--android:id="@+id/stratBtn"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="center"-->
+        <!--android:text="Strategy" />-->
 </LinearLayout>
