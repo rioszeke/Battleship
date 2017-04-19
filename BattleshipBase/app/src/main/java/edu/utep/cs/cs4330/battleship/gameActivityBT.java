@@ -78,6 +78,7 @@ public class gameActivityBT extends AppCompatActivity {
     private RetainedFragment mRetainedFragment;
     private BluetoothAdapter bt;
     private BluetoothSocket socket;
+    private boolean connectWithPlayer = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
