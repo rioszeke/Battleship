@@ -6,14 +6,12 @@ package edu.utep.cs.cs4330.battleship;
 
 class ComputerPlayer extends Player {
     private Board opponentBoard;
-    private boolean turn;
     private BoardView playerBoardView;
     private Strategy strategy;
 
     public ComputerPlayer(Board board, boolean turn, BoardView view, Strategy strategy){
         super(board, turn, view);
         opponentBoard = board;
-        this.turn = turn;
         playerBoardView = view;
         this.strategy = strategy;
     }
@@ -21,7 +19,6 @@ class ComputerPlayer extends Player {
     public ComputerPlayer(Board board, boolean turn, BoardView view){
         super(board, turn, view);
         opponentBoard = board;
-        this.turn = turn;
         playerBoardView = view;
     }
 

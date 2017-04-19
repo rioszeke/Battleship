@@ -15,12 +15,6 @@ import android.widget.TextView;
  */
 public class playFragmentBT extends Fragment {
 
-    private BoardView playerBoardView;
-    private BoardView opponentBoardView;
-    private TextView numShots;
-    private Board playerBoard;
-    private Board opponentBoard;
-
     public playFragmentBT() {
         // Required empty public constructor
     }

@@ -3,10 +3,7 @@ package edu.utep.cs.cs4330.battleship;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothServerSocket;
-import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.provider.Settings;
@@ -19,12 +16,9 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 import static android.content.ContentValues.TAG;
 
@@ -130,48 +124,10 @@ public class bluetoothSetUpFragment extends Fragment implements AdapterView.OnIt
         for (BluetoothDevice device : devices) {
             if (device.getName().equals(deviceName)) {
                 Log.d(TAG,deviceName);
-                final BluetoothDevice clientDevice = device;
-                //Server
-//                AsyncTask.execute(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        try {
-//                            BluetoothServerSocket serverSocket
-//                                    = bt.listenUsingRfcommWithServiceRecord(MY_NAME, MY_UUID);
-//                            BluetoothSocket socket = serverSocket.accept();
-//                            running = true;
-////                            while(running){
-////                                //maintain connection
-////                            }
-//                            socket.close();
-//                            serverSocket.close();
-//                        } catch (IOException e) {/*already a server so move on*/)}                    }
-//                });
                 notifyListItemSelected(position, id);
-//                AsyncTask.execute(new Runnable() {
-//                  @Override
-//                  public void run() {
-//                      BluetoothSocket socket = null;
-//                      try {
-//                          socket = clientDevice.createRfcommSocketToServiceRecord(MY_UUID);
-//                          socket.connect();
-//                          socket.close();
-//                      } catch (IOException e) {
-//                      }
-//                  }
-//            }
-
             }
         }
-
     }
-
-
-
-    protected void toast(String msg) {
-        Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
-    }
-
     @Override
     public void onResume() {
         super.onResume();
