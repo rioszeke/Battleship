@@ -6,13 +6,11 @@ package edu.utep.cs.cs4330.battleship;
 
 class Player {
     private Board opponentBoard;
-    private boolean turn;
     private BoardView playerView;
     private boolean allSunk;
 
     public Player(Board board, boolean turn, BoardView view){
         opponentBoard = board;
-        this.turn = turn;
         allSunk = false;
         playerView = view;
     }
@@ -25,16 +23,8 @@ class Player {
         return false;
     }
 
-    public void nextMove(){
-
-    }
-    public boolean getTurn(){
-        return turn;
-    }
-
-    public void setTurn(Boolean turn){
-        this.turn = turn;
-    }
+    public void nextMove(){}
+    public void nextMove(int x, int y){}
 
     public boolean getAllSunk(){
         return opponentBoard.isGameOver();

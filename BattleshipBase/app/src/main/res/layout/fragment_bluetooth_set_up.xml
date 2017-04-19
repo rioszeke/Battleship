@@ -30,7 +30,6 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/btTextView"
         android:layout_alignTop="@+id/btTextView"
-        android:onClick="enableClicked"
         android:text="Enable BT"/>
     <Button
         android:layout_width="wrap_content"
@@ -38,7 +37,6 @@
         android:id="@+id/settings_btn"
         android:layout_alignLeft="@+id/pair_btn"
         android:layout_alignTop="@+id/pair_btn"
-        android:onClick="settingsClicked"
         android:text="Settings"
         />
 

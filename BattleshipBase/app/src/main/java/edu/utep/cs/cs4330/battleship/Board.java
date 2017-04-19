@@ -1,5 +1,6 @@
 package edu.utep.cs.cs4330.battleship;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.Random;
  * and y is a row index. A place of the board can be shot at, resulting
  * in either a hit or miss.
  */
-public class Board /*implements Runnable*/{
+public class Board{
 
     /**
      * Size of this board. This board has
@@ -147,14 +148,14 @@ public class Board /*implements Runnable*/{
         int i = 0;
         for(Place place: places()){
             String hit = "";
-            if(place.isHitShip()){
+            if(place.hasShip()){
                 hit = "SHIP";
             }
-            else{
-                if(place.isHit()) {
-                    hit = "!hit";
-                }
-            }
+//            else{
+//                if(place.isHit()) {
+//                    hit = "!hit";
+//                }
+//            }
             System.out.print("["+place.getX()+","+place.getY()+":"+hit+"]");
             i++;
             if(i == size()){
